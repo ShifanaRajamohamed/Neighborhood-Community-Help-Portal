@@ -5,6 +5,7 @@ import { testConnection } from './config/database';
 import { errorHandler } from './middleware/errorHandler';
 import userRoutes from './routes/userRoutes';
 import requestRoutes from './routes/requestRoutes';
+import adminRoutes from './routes/adminRoutes';
 
 dotenv.config();
 
@@ -28,6 +29,7 @@ app.get('/health', (_req: Request, res: Response) => {
 // API Routes
 app.use('/api/users', userRoutes);
 app.use('/api/requests', requestRoutes);
+app.use('/api/admin', adminRoutes);
 
 // 404 handler
 app.use((_req: Request, res: Response) => {

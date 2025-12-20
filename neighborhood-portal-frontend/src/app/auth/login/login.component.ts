@@ -51,8 +51,13 @@ export class LoginComponent implements OnInit {
       next: (response) => {
         if (response.success) {
           this.snackBar.open('Login successful!', 'Close', { duration: 2000 });
+
+          // Redirect admin users to admin dashboard
+          const currentUser = this.authService.getCurrentUser();
+          const redirectUrl = currentUser?.role === 'admin' ? '/admin' : this.returnUrl;
+
           setTimeout(() => {
-            this.router.navigate([this.returnUrl]);
+            this.router.navigate([redirectUrl]);
           }, 100);
         } else {
           setTimeout(() => {

@@ -1,0 +1,177 @@
+<!-- Admin Request Detail -->
+<div class="admin-request-detail">
+  <!-- Header -->
+  <header class="admin-header">
+    <div class="container">
+      <div class="header-content">
+        <a routerLink="/" class="logo">
+          <span class="logo-icon">🏘️</span>
+          <span class="logo-text">NeighborHelp Admin</span>
+        </a>
+        <nav class="header-nav">
+          <a routerLink="/admin" class="nav-link">Dashboard</a>
+          <a routerLink="/admin/requests" class="nav-link">All Requests</a>
+        </nav>
+        <div class="header-actions">
+          <a routerLink="/admin/requests" class="btn btn-secondary btn-sm">← Back to Requests</a>
+          <button (click)="logout()" class="btn btn-secondary btn-sm">Sign Out</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="admin-main">
+    <div class="container">
+      @if (request) {
+      <!-- Page Header -->
+      <div class="page-header">
+        <div class="header-left">
+          <span class="request-id">Request #{{ request.id }}</span>
+          <h1 class="page-title">{{ request.title }}</h1>
+        </div>
+        <div class="header-right">
+          <span [class]="'status-chip status-' + request.status">
+            {{ request.status.replace('_', ' ') }}
+          </span>
+        </div>
+      </div>
+
+      <div class="detail-grid">
+        <!-- Left Column -->
+        <div class="detail-left">
+          <!-- Request Information -->
+          <mat-card class="info-card">
+            <h2 class="card-title">Request Details</h2>
+
+            <div class="info-group">
+              <span class="info-label">Description</span>
+              <p class="info-value">{{ request.description }}</p>
+            </div>
+
+            <div class="info-row">
+              <div class="info-group">
+                <span class="info-label">Category</span>
+                <span class="category-badge">{{ request.category }}</span>
+              </div>
+
+              <div class="info-group">
+                <span class="info-label">Created</span>
+                <span class="info-value">{{ request.created_at | date: 'MMM d, y, h:mm a' }}</span>
+              </div>
+            </div>
+
+            @if (request.updated_at) {
+            <div class="info-group">
+              <span class="info-label">Last Updated</span>
+              <span class="info-value">{{ request.updated_at | date: 'MMM d, y, h:mm a' }}</span>
+            </div>
+            }
+          </mat-card>
+
+          <!-- Resident Information -->
+          <mat-card class="info-card">
+            <h2 class="card-title">Resident Information</h2>
+
+            <div class="info-group">
+              <span class="info-label">Name</span>
+              <span class="info-value">{{ request.resident_name || 'N/A' }}</span>
+            </div>
+
+            @if (request.location) {
+            <div class="info-group">
+              <span class="info-label">Location</span>
+              <span class="info-value">{{ request.location }}</span>
+            </div>
+            }
+          </mat-card>
+
+          <!-- Helper Information -->
+          <mat-card class="info-card">
+            <h2 class="card-title">Helper Information</h2>
+
+            <div class="info-group">
+              <span class="info-label">Name</span>
+              <span class="info-value">{{ request.helper_name || 'Not assigned yet' }}</span>
+            </div>
+
+            @if (!request.helper_id) {
+            <p class="info-note">No helper assigned to this request yet.</p>
+            }
+          </mat-card>
+        </div>
+
+        <!-- Right Column -->
+        <div class="detail-right">
+          <!-- Status Management -->
+          <mat-card class="action-card">
+            <h2 class="card-title">Status Management</h2>
+
+            <mat-form-field appearance="outline" class="status-field">
+              <mat-label>Update Status</mat-label>
+              <mat-select [formControl]="statusControl">
+                @for (option of statusOptions; track option.value) {
+                <mat-option [value]="option.value">{{ option.label }}</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+
+            <button mat-raised-button color="primary" (click)="updateStatus()" class="btn btn-primary"
+              [disabled]="statusControl.value === request.status">
+              Update Status
+            </button>
+
+            <p class="action-note">
+              Admin override: You can change the status regardless of normal workflow rules.
+            </p>
+          </mat-card>
+
+          <!-- Status Timeline -->
+          <mat-card class="timeline-card">
+            <h2 class="card-title">Status Timeline</h2>
+
+            <mat-stepper [selectedIndex]="getStatusStep(request.status)" orientation="vertical">
+              <mat-step [completed]="getStatusStep(request.status) >= 0">
+                <ng-template matStepLabel>Pending</ng-template>
+                <p class="step-description">Request awaiting helper</p>
+              </mat-step>
+
+              <mat-step [completed]="getStatusStep(request.status) >= 1">
+                <ng-template matStepLabel>Accepted</ng-template>
+                <p class="step-description">Helper accepted the request</p>
+              </mat-step>
+
+              <mat-step [completed]="getStatusStep(request.status) >= 2">
+                <ng-template matStepLabel>In Progress</ng-template>
+                <p class="step-description">Help is being provided</p>
+              </mat-step>
+
+              <mat-step [completed]="getStatusStep(request.status) >= 3">
+                <ng-template matStepLabel>Completed</ng-template>
+                <p class="step-description">Request fulfilled</p>
+              </mat-step>
+            </mat-stepper>
+          </mat-card>
+
+          <!-- Danger Zone -->
+          <mat-card class="danger-card">
+            <h2 class="card-title">Danger Zone</h2>
+
+            <p class="danger-text">
+              Archive this request to remove it from the system. This action cannot be undone.
+            </p>
+
+            <button mat-raised-button color="warn" (click)="archiveRequest()" class="btn btn-destructive">
+              Archive Request
+            </button>
+          </mat-card>
+        </div>
+      </div>
+      } @else {
+      <div class="loading-state">
+        <p>Loading request details...</p>
+      </div>
+      }
+    </div>
+  </main>
+</div>

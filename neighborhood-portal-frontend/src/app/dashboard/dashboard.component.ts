@@ -1,6 +1,6 @@
 import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -35,6 +35,7 @@ export class DashboardComponent implements OnInit {
   constructor(
     private authService: AuthService,
     private requestService: RequestService,
+    private router: Router,
     private cdr: ChangeDetectorRef
   ) { }
 
@@ -73,6 +74,7 @@ export class DashboardComponent implements OnInit {
 
   logout(): void {
     this.authService.logout();
+    this.router.navigate(['/login']);
   }
 
   get isResident(): boolean {
@@ -81,5 +83,9 @@ export class DashboardComponent implements OnInit {
 
   get isHelper(): boolean {
     return this.currentUser?.role === UserRole.HELPER;
+  }
+
+  get isAdmin(): boolean {
+    return this.currentUser?.role === UserRole.ADMIN;
   }
 }

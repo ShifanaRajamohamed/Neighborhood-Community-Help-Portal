@@ -41,6 +41,24 @@ export const routes: Routes = [
     ]
   },
   {
+    path: 'admin',
+    canActivate: [authGuard, roleGuard(UserRole.ADMIN)],
+    children: [
+      {
+        path: '',
+        loadComponent: () => import('./admin/admin-dashboard/admin-dashboard.component').then(m => m.AdminDashboardComponent)
+      },
+      {
+        path: 'requests',
+        loadComponent: () => import('./admin/admin-requests/admin-requests.component').then(m => m.AdminRequestsComponent)
+      },
+      {
+        path: 'requests/:id',
+        loadComponent: () => import('./admin/admin-request-detail/admin-request-detail.component').then(m => m.AdminRequestDetailComponent)
+      }
+    ]
+  },
+  {
     path: 'unauthorized',
     loadComponent: () => import('./shared/components/unauthorized/unauthorized.component').then(m => m.UnauthorizedComponent)
   },
