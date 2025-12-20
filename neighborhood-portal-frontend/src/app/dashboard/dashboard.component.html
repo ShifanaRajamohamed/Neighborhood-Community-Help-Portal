@@ -1,68 +1,149 @@
-<div class="dashboard-container">
+﻿<!-- Dashboard - Professional Design with KPI Cards and Data Table -->
+<div class="dashboard">
+  <!-- Header -->
   <header class="dashboard-header">
-    <div>
-      <h1>Welcome, {{ currentUser?.name }}</h1>
-      <p class="role-badge">{{ currentUser?.role | uppercase }}</p>
+    <div class="container">
+      <div class="header-content">
+        <a routerLink="/" class="logo">
+          <span class="logo-icon"></span>
+          <span class="logo-text">NeighborHelp</span>
+        </a>
+        <nav class="header-nav">
+          <a routerLink="/dashboard" class="nav-link active">Dashboard</a>
+          <a routerLink="/requests" class="nav-link">All Requests</a>
+          @if (isResident) {
+            <a routerLink="/requests/new" class="nav-link">New Request</a>
+          }
+        </nav>
+        <div class="header-actions">
+          <div class="user-info">
+            <span class="user-name">{{ currentUser?.name }}</span>
+            <span class="user-role">{{ currentUser?.role }}</span>
+          </div>
+          <button (click)="logout()" class="btn btn-secondary btn-sm">Sign Out</button>
+        </div>
+      </div>
     </div>
-    <button mat-raised-button (click)="logout()">Logout</button>
   </header>
 
-  <div class="dashboard-stats">
-    <div class="stat-card card">
-      <h3>Total Requests</h3>
-      <p class="stat-number">{{ stats.total }}</p>
-    </div>
+  <!-- Main Content -->
+  <main class="dashboard-main">
+    <div class="container">
+      <!-- Page Header -->
+      <div class="page-header">
+        <h1 class="page-title">
+          @if (isResident) {
+            My Help Requests
+          } @else {
+            Helper Dashboard
+          }
+        </h1>
+        <p class="page-subtitle">
+          @if (isResident) {
+            Manage your requests and track their progress
+          } @else {
+            View and accept requests from neighbors who need help
+          }
+        </p>
+      </div>
 
-    <div class="stat-card card">
-      <h3>Pending</h3>
-      <p class="stat-number">{{ stats.pending }}</p>
-    </div>
+      <!-- KPI Cards -->
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <span class="kpi-label">Total Requests</span>
+          <span class="kpi-value">{{ stats.total }}</span>
+        </div>
+        <div class="kpi-card">
+          <span class="kpi-label">Pending</span>
+          <span class="kpi-value kpi-warning">{{ stats.pending }}</span>
+        </div>
+        <div class="kpi-card">
+          <span class="kpi-label">In Progress</span>
+          <span class="kpi-value kpi-info">{{ stats.inProgress }}</span>
+        </div>
+        <div class="kpi-card">
+          <span class="kpi-label">Completed</span>
+          <span class="kpi-value kpi-success">{{ stats.completed }}</span>
+        </div>
+      </div>
 
-    <div class="stat-card card">
-      <h3>In Progress</h3>
-      <p class="stat-number">{{ stats.inProgress }}</p>
-    </div>
+      <!-- Quick Actions -->
+      <div class="section-header">
+        <h2 class="section-title">Quick Actions</h2>
+      </div>
+      <div class="quick-actions">
+        @if (isResident) {
+          <a routerLink="/requests/new" class="btn btn-primary">
+            <span>+</span> Create New Request
+          </a>
+        }
+        <a routerLink="/requests" class="btn btn-secondary">View All Requests</a>
+      </div>
 
-    <div class="stat-card card">
-      <h3>Completed</h3>
-      <p class="stat-number">{{ stats.completed }}</p>
-    </div>
-  </div>
+      <!-- Recent Requests Table -->
+      <div class="section-header">
+        <h2 class="section-title">Recent Requests</h2>
+        <a routerLink="/requests" class="section-link">View all </a>
+      </div>
 
-  <div class="dashboard-actions">
-    @if (isResident) {
-      <button mat-raised-button color="primary" routerLink="/requests/new">
-        Create New Request
-      </button>
-    }
-    <button mat-raised-button routerLink="/requests">
-      View All Requests
-    </button>
-    @if (isHelper) {
-      <button mat-raised-button color="accent" routerLink="/requests">
-        Browse Available Requests
-      </button>
-    }
-  </div>
-
-  @if (requests.length > 0) {
-    <div class="recent-requests">
-      <h2>Recent Requests</h2>
-      <div class="request-table">
-        @for (request of requests; track request.id) {
-          <div class="request-row card">
-            <div class="request-info">
-              <h3>{{ request.title }}</h3>
-              <p>{{ request.category }}</p>
-            </div>
-            <div class="request-status">
-              <span class="status-chip" [ngClass]="'status-' + request.status.replace('_', '-')">
-                {{ request.status.replace('_', ' ') | uppercase }}
-              </span>
-            </div>
+      <div class="card">
+        @if (requests.length > 0) {
+          <div class="table-container">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Title</th>
+                  <th>Category</th>
+                  <th>Status</th>
+                  <th>Date</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (request of requests; track request.id) {
+                  <tr>
+                    <td>
+                      <span class="request-title">{{ request.title }}</span>
+                    </td>
+                    <td>
+                      <span class="request-category">{{ request.category }}</span>
+                    </td>
+                    <td>
+                      <span class="status-chip" [ngClass]="'status-' + request.status.replace('_', '-')">
+                        {{ request.status.replace('_', ' ') }}
+                      </span>
+                    </td>
+                    <td>
+                      <span class="request-date">{{ request.created_at | date:'mediumDate' }}</span>
+                    </td>
+                    <td>
+                      <a [routerLink]="['/requests', request.id]" class="btn btn-sm btn-secondary">
+                        View
+                      </a>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        } @else {
+          <div class="empty-state">
+            <p class="empty-state-title">No requests yet</p>
+            <p class="empty-state-text">
+              @if (isResident) {
+                Create your first help request to get started.
+              } @else {
+                Browse available requests to help your neighbors.
+              }
+            </p>
+            @if (isResident) {
+              <a routerLink="/requests/new" class="btn btn-primary">Create Request</a>
+            } @else {
+              <a routerLink="/requests" class="btn btn-primary">Browse Requests</a>
+            }
           </div>
         }
       </div>
     </div>
-  }
+  </main>
 </div>

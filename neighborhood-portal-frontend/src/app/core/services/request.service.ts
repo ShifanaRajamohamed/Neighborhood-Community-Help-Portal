@@ -10,7 +10,7 @@ import { HelpRequest, CreateRequestDTO, UpdateRequestStatusDTO, ApiResponse, Req
 export class RequestService {
   private apiUrl = `${environment.apiUrl}/requests`;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   createRequest(requestData: CreateRequestDTO): Observable<ApiResponse<HelpRequest>> {
     return this.http.post<ApiResponse<HelpRequest>>(this.apiUrl, requestData);
@@ -33,6 +33,8 @@ export class RequestService {
       params = params.set('helper_id', filters.helper_id === null ? 'null' : filters.helper_id.toString());
     }
 
+    // Backend now returns paginated response with { data: [...], meta: {...} }
+    // We keep the interface the same for backward compatibility
     return this.http.get<ApiResponse<HelpRequest[]>>(this.apiUrl, { params });
   }
 

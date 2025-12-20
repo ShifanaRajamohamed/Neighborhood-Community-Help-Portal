@@ -2,6 +2,8 @@
 module.exports = {
   content: [
     "./src/**/*.{html,ts}",
+    "./src/**/*.html",
+    "./src/**/*.ts"
   ],
   theme: {
     extend: {
@@ -61,7 +63,45 @@ module.exports = {
         xl: 'var(--shadow-xl)',
         '2xl': 'var(--shadow-2xl)',
       },
+      animation: {
+        'gradient-shift': 'gradientShift 15s ease infinite',
+        'float': 'float 3s ease-in-out infinite',
+        'fadeIn': 'fadeIn 0.5s ease-out',
+        'fadeInUp': 'fadeInUp 0.6s ease-out',
+        'scaleIn': 'scaleIn 0.4s ease-out',
+      },
+      keyframes: {
+        gradientShift: {
+          '0%, 100%': { backgroundPosition: '0% 50%' },
+          '50%': { backgroundPosition: '100% 50%' },
+        },
+        float: {
+          '0%, 100%': { transform: 'translateY(0)' },
+          '50%': { transform: 'translateY(-10px)' },
+        },
+        fadeIn: {
+          '0%': { opacity: '0', transform: 'translateY(10px)' },
+          '100%': { opacity: '1', transform: 'translateY(0)' },
+        },
+        fadeInUp: {
+          '0%': { opacity: '0', transform: 'translateY(30px)' },
+          '100%': { opacity: '1', transform: 'translateY(0)' },
+        },
+        scaleIn: {
+          '0%': { opacity: '0', transform: 'scale(0.9)' },
+          '100%': { opacity: '1', transform: 'scale(1)' },
+        },
+      },
     },
   },
   plugins: [],
+  safelist: [
+    'glass-card',
+    'btn-gradient',
+    'btn-gradient-primary',
+    'btn-gradient-secondary',
+    'btn-gradient-accent',
+    'gradient-text',
+    'animate-gradient-shift',
+  ],
 }

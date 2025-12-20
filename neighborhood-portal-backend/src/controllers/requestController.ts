@@ -27,7 +27,7 @@ export const createRequest = asyncHandler(async (req: AuthRequest, res: Response
 });
 
 export const getRequests = asyncHandler(async (req: AuthRequest, res: Response<ApiResponse>) => {
-  const { status, resident_id, helper_id } = req.query;
+  const { status, resident_id, helper_id, limit, offset } = req.query;
 
   const filters: any = {};
   if (status) filters.status = status as string;
@@ -35,11 +35,20 @@ export const getRequests = asyncHandler(async (req: AuthRequest, res: Response<A
   if (helper_id === 'null') filters.helper_id = null;
   else if (helper_id) filters.helper_id = parseInt(helper_id as string);
 
-  const requests = await requestService.getAllRequests(filters);
+  // Add pagination parameters
+  if (limit) filters.limit = parseInt(limit as string);
+  if (offset) filters.offset = parseInt(offset as string);
+
+  const result = await requestService.getAllRequests(filters);
 
   res.status(200).json({
     success: true,
-    data: requests
+    data: result.requests,
+    meta: {
+      total: result.total,
+      limit: filters.limit || 50,
+      offset: filters.offset || 0
+    }
   });
 });
 

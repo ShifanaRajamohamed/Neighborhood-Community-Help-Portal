@@ -36,7 +36,7 @@ export class DashboardComponent implements OnInit {
     private authService: AuthService,
     private requestService: RequestService,
     private cdr: ChangeDetectorRef
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.currentUser = this.authService.getCurrentUser();

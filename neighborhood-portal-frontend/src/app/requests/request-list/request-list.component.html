@@ -1,73 +1,146 @@
-<div class="request-list-container">
-  <div class="header flex-between">
-    <h1>Help Requests</h1>
-    @if (currentUserRole === 'resident') {
-      <button mat-raised-button color="primary" routerLink="/requests/new">
-        Create New Request
-      </button>
-    }
-  </div>
-
-  @if (loading) {
-    <div class="loading-container">
-      <mat-spinner></mat-spinner>
+﻿<!-- Request List - Professional Design with Data Table -->
+<div class="page-layout">
+  <!-- Header -->
+  <header class="page-top-header">
+    <div class="container">
+      <div class="header-content">
+        <a routerLink="/" class="logo">
+          <span class="logo-icon"></span>
+          <span class="logo-text">NeighborHelp</span>
+        </a>
+        <nav class="header-nav">
+          <a routerLink="/dashboard" class="nav-link">Dashboard</a>
+          <a routerLink="/requests" class="nav-link active">All Requests</a>
+          @if (currentUserRole === 'resident') {
+            <a routerLink="/requests/new" class="nav-link">New Request</a>
+          }
+        </nav>
+        <div class="header-actions">
+          <a routerLink="/dashboard" class="btn btn-secondary btn-sm">Back to Dashboard</a>
+        </div>
+      </div>
     </div>
-  } @else {
-    @if (requests.length === 0) {
-      <mat-card class="empty-state">
-        <p>No requests found</p>
+  </header>
+
+  <!-- Main Content -->
+  <main class="page-main">
+    <div class="container">
+      <!-- Page Header -->
+      <div class="page-header">
+        <div class="page-header-content">
+          <h1 class="page-title">
+            @if (currentUserRole === 'resident') {
+              My Requests
+            } @else {
+              Available Requests
+            }
+          </h1>
+          <p class="page-subtitle">
+            @if (currentUserRole === 'resident') {
+              View and manage all your help requests
+            } @else {
+              Browse and accept requests from neighbors who need help
+            }
+          </p>
+        </div>
         @if (currentUserRole === 'resident') {
-          <button mat-raised-button color="primary" routerLink="/requests/new">
-            Create Your First Request
-          </button>
-        }
-      </mat-card>
-    } @else {
-      <div class="request-grid">
-        @for (request of requests; track request.id) {
-          <mat-card class="request-card">
-            <mat-card-header>
-              <mat-card-title>{{ request.title }}</mat-card-title>
-              <mat-card-subtitle>{{ request.category }}</mat-card-subtitle>
-            </mat-card-header>
-
-            <mat-card-content>
-              <p class="description">{{ request.description }}</p>
-
-              <div class="meta-info">
-                <span class="status-chip" [ngClass]="getStatusClass(request.status)">
-                  {{ getStatusLabel(request.status) }}
-                </span>
-                <span class="date">{{ request.created_at | date: 'short' }}</span>
-              </div>
-            </mat-card-content>
-
-            <mat-card-actions>
-              @if (currentUserRole === 'helper' && request.status === 'pending') {
-                <button mat-raised-button color="primary" (click)="acceptRequest(request.id)">
-                  Accept
-                </button>
-              }
-
-              @if (currentUserRole === 'helper' && request.status === 'accepted') {
-                <button mat-raised-button color="primary" (click)="startProgress(request.id)">
-                  Start Work
-                </button>
-              }
-
-              @if (currentUserRole === 'helper' && request.status === 'in_progress') {
-                <button mat-raised-button color="primary" (click)="completeRequest(request.id)">
-                  Mark Complete
-                </button>
-              }
-
-              <button mat-button [routerLink]="['/requests', request.id]">
-                View Details
-              </button>
-            </mat-card-actions>
-          </mat-card>
+          <a routerLink="/requests/new" class="btn btn-primary">
+            <span>+</span> New Request
+          </a>
         }
       </div>
-    }
-  }
+
+      <!-- Loading State -->
+      @if (loading) {
+        <div class="loading-state">
+          <div class="spinner-lg"></div>
+          <p>Loading requests...</p>
+        </div>
+      } @else {
+        <!-- Requests Table -->
+        <div class="card">
+          @if (requests.length > 0) {
+            <div class="table-container">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Request</th>
+                    <th>Category</th>
+                    <th>Location</th>
+                    <th>Status</th>
+                    <th>Date</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (request of requests; track request.id) {
+                    <tr>
+                      <td>
+                        <div class="request-info">
+                          <span class="request-title">{{ request.title }}</span>
+                          <span class="request-desc">{{ request.description | slice:0:60 }}{{ request.description.length > 60 ? '...' : '' }}</span>
+                        </div>
+                      </td>
+                      <td>
+                        <span class="category-tag">{{ request.category }}</span>
+                      </td>
+                      <td>
+                        <span class="location-text">{{ request.location }}</span>
+                      </td>
+                      <td>
+                        <span class="status-chip" [ngClass]="getStatusClass(request.status)">
+                          {{ request.status.replace('_', ' ') }}
+                        </span>
+                      </td>
+                      <td>
+                        <span class="date-text">{{ request.created_at | date:'mediumDate' }}</span>
+                      </td>
+                      <td>
+                        <div class="action-buttons">
+                          <a [routerLink]="['/requests', request.id]" class="btn btn-sm btn-secondary">
+                            View
+                          </a>
+                          @if (currentUserRole === 'helper') {
+                            @if (request.status === 'pending') {
+                              <button (click)="acceptRequest(request.id)" class="btn btn-sm btn-primary">
+                                Accept
+                              </button>
+                            }
+                            @if (request.status === 'accepted') {
+                              <button (click)="startProgress(request.id)" class="btn btn-sm btn-primary">
+                                Start
+                              </button>
+                            }
+                            @if (request.status === 'in_progress') {
+                              <button (click)="completeRequest(request.id)" class="btn btn-sm btn-primary">
+                                Complete
+                              </button>
+                            }
+                          }
+                        </div>
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          } @else {
+            <div class="empty-state">
+              <p class="empty-state-title">No requests found</p>
+              <p class="empty-state-text">
+                @if (currentUserRole === 'resident') {
+                  Create your first help request to get started.
+                } @else {
+                  There are no available requests at the moment. Check back soon!
+                }
+              </p>
+              @if (currentUserRole === 'resident') {
+                <a routerLink="/requests/new" class="btn btn-primary">Create Request</a>
+              }
+            </div>
+          }
+        </div>
+      }
+    </div>
+  </main>
 </div>

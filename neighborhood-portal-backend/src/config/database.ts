@@ -12,19 +12,64 @@ const pool = mysql.createPool({
   connectionLimit: 10,
   queueLimit: 0,
   enableKeepAlive: true,
-  keepAliveInitialDelay: 0
+  keepAliveInitialDelay: 0,
+  maxIdle: 10,
+  idleTimeout: 60000,
+  connectTimeout: 10000
 });
 
-// Test database connection
-export const testConnection = async (): Promise<void> => {
+// Connection pool error handling
+pool.on('connection', () => {
+  console.log('✓ New database connection established');
+});
+
+pool.on('release', () => {
+  console.log('✓ Connection returned to pool');
+});
+
+// Test database connection with retry logic
+export const testConnection = async (retries = 3): Promise<void> => {
+  for (let i = 0; i < retries; i++) {
+    try {
+      const connection = await pool.getConnection();
+      console.log('✓ Database connected successfully');
+      console.log(`✓ Pool stats: ${pool.pool.config.connectionLimit} max connections`);
+      connection.release();
+      return;
+    } catch (error) {
+      console.error(`✗ Database connection attempt ${i + 1}/${retries} failed:`, error);
+      if (i === retries - 1) {
+        console.error('✗ All connection attempts exhausted');
+        throw error;
+      }
+      // Wait before retrying (exponential backoff)
+      await new Promise(resolve => setTimeout(resolve, Math.pow(2, i) * 1000));
+    }
+  }
+};
+
+// Graceful shutdown
+export const closePool = async (): Promise<void> => {
   try {
-    const connection = await pool.getConnection();
-    console.log('✓ Database connected successfully');
-    connection.release();
+    await pool.end();
+    console.log('✓ Database connection pool closed gracefully');
   } catch (error) {
-    console.error('✗ Database connection failed:', error);
+    console.error('✗ Error closing database pool:', error);
     throw error;
   }
 };
+
+// Handle process termination
+process.on('SIGTERM', async () => {
+  console.log('SIGTERM signal received: closing database connections');
+  await closePool();
+  process.exit(0);
+});
+
+process.on('SIGINT', async () => {
+  console.log('SIGINT signal received: closing database connections');
+  await closePool();
+  process.exit(0);
+});
 
 export default pool;

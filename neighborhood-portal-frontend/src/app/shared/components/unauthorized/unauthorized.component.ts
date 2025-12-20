@@ -1,48 +1,66 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { MatCardModule } from '@angular/material/card';
-import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'app-unauthorized',
   standalone: true,
-  imports: [CommonModule, RouterLink, MatCardModule, MatButtonModule],
+  imports: [CommonModule, RouterLink],
   template: `
-    <div class="unauthorized-container">
-      <mat-card>
-        <mat-card-header>
-          <mat-card-title>
-            <h1>Unauthorized Access</h1>
-          </mat-card-title>
-        </mat-card-header>
-        <mat-card-content>
-          <p>You don't have permission to access this page.</p>
-        </mat-card-content>
-        <mat-card-actions>
-          <button mat-raised-button color="primary" routerLink="/dashboard">
-            Go to Dashboard
-          </button>
-        </mat-card-actions>
-      </mat-card>
+    <div class="unauthorized-page">
+      <div class="unauthorized-content">
+        <span class="unauthorized-icon">🚫</span>
+        <h1>Unauthorized Access</h1>
+        <p>You don't have permission to access this page.</p>
+        <div class="unauthorized-actions">
+          <a routerLink="/dashboard" class="btn btn-primary">Go to Dashboard</a>
+          <a routerLink="/" class="btn btn-secondary">Back to Home</a>
+        </div>
+      </div>
     </div>
   `,
   styles: [`
-    .unauthorized-container {
+    .unauthorized-page {
       display: flex;
       justify-content: center;
       align-items: center;
       min-height: 100vh;
-      padding: var(--spacing-lg);
+      padding: var(--space-6);
+      background: var(--color-bg);
     }
 
-    mat-card {
-      max-width: 500px;
+    .unauthorized-content {
+      max-width: 400px;
       text-align: center;
+      padding: var(--space-8);
+      background: var(--color-bg-elevated);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius);
+    }
+
+    .unauthorized-icon {
+      font-size: 48px;
+      display: block;
+      margin-bottom: var(--space-4);
     }
 
     h1 {
-      color: var(--color-error);
+      font-size: var(--text-2xl);
+      font-weight: var(--font-semibold);
+      color: var(--color-fg);
+      margin-bottom: var(--space-3);
+    }
+
+    p {
+      font-size: var(--text-base);
+      color: var(--color-fg-muted);
+      margin-bottom: var(--space-6);
+    }
+
+    .unauthorized-actions {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-3);
     }
   `]
 })

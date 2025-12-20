@@ -16,10 +16,10 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
         const errorMessage = error.error?.error || '';
         // Check if it's a token-related error
         const tokenErrors = ['token', 'expired', 'invalid', 'Authentication required', 'jwt'];
-        const isTokenError = tokenErrors.some(keyword => 
+        const isTokenError = tokenErrors.some(keyword =>
           errorMessage.toLowerCase().includes(keyword.toLowerCase())
         );
-        
+
         if (isTokenError) {
           console.log('Token error detected, logging out');
           authService.logout();

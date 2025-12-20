@@ -148,4 +148,25 @@ export class RequestDetailComponent implements OnInit {
   goBack(): void {
     this.router.navigate(['/requests']);
   }
+
+  // Stepper helper methods
+  getStepperProgress(): string {
+    if (!this.request) return '0%';
+    const statusOrder = ['pending', 'accepted', 'in_progress', 'completed'];
+    const index = statusOrder.indexOf(this.request.status);
+    if (index === -1) return '0%';
+    return `${(index / (statusOrder.length - 1)) * 100}%`;
+  }
+
+  isStepActive(step: string): boolean {
+    return this.request?.status === step;
+  }
+
+  isStepCompleted(step: string): boolean {
+    if (!this.request) return false;
+    const statusOrder = ['pending', 'accepted', 'in_progress', 'completed'];
+    const currentIndex = statusOrder.indexOf(this.request.status);
+    const stepIndex = statusOrder.indexOf(step);
+    return stepIndex < currentIndex;
+  }
 }

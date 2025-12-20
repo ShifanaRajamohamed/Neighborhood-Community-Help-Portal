@@ -17,6 +17,12 @@ export const validateUserRegistration = (
     throw new AppError('Contact info is required', 400);
   }
 
+  // Email validation
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(contact_info)) {
+    throw new AppError('Please provide a valid email address', 400);
+  }
+
   if (!location || typeof location !== 'string' || location.trim().length === 0) {
     throw new AppError('Location is required', 400);
   }
@@ -25,8 +31,26 @@ export const validateUserRegistration = (
     throw new AppError('Valid role is required (resident, helper, admin)', 400);
   }
 
-  if (!password || typeof password !== 'string' || password.length < 6) {
-    throw new AppError('Password must be at least 6 characters', 400);
+  // Enhanced password validation
+  if (!password || typeof password !== 'string') {
+    throw new AppError('Password is required', 400);
+  }
+
+  if (password.length < 8) {
+    throw new AppError('Password must be at least 8 characters long', 400);
+  }
+
+  // Check for password complexity
+  const hasUpperCase = /[A-Z]/.test(password);
+  const hasLowerCase = /[a-z]/.test(password);
+  const hasNumber = /\d/.test(password);
+  const hasSpecialChar = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password);
+
+  if (!hasUpperCase || !hasLowerCase || !hasNumber || !hasSpecialChar) {
+    throw new AppError(
+      'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character',
+      400
+    );
   }
 
   next();

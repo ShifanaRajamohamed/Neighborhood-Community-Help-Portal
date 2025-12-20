@@ -30,6 +30,10 @@ export interface HelpRequest {
   status: RequestStatus;
   attachments: string | null;
   created_at: Date;
+  updated_at?: Date;
+  location?: string;
+  resident_name?: string;
+  helper_name?: string;
 }
 
 export interface CreateUserDTO {

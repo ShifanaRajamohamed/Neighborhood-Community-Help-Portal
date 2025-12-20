@@ -1,59 +1,88 @@
-<div class="min-h-screen flex items-center justify-center bg-background p-4">
-  <div class="w-full max-w-md">
-    <div class="text-center mb-8">
-      <h1 class="text-4xl font-bold text-foreground mb-2">Welcome Back</h1>
-      <p class="text-muted-foreground">Sign in to your neighborhood portal</p>
+﻿<!-- Login Page - Professional, Clean Design -->
+<div class="auth-page">
+  <div class="auth-container">
+    <!-- Left Side - Branding -->
+    <div class="auth-brand">
+      <div class="brand-content">
+        <a routerLink="/" class="brand-logo">
+          <span class="logo-icon"></span>
+          <span class="logo-text">NeighborHelp</span>
+        </a>
+        <h1 class="brand-title">Welcome back</h1>
+        <p class="brand-text">
+          Sign in to continue helping your community and managing your requests.
+        </p>
+      </div>
     </div>
 
-    <div class="bg-card border border-border rounded-lg shadow-lg p-8">
-      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="space-y-6">
-        <div>
-          <label for="contact_info" class="block text-sm font-medium text-foreground mb-2">
-            Email Address
-          </label>
-          <input
-            id="contact_info"
-            type="email"
-            formControlName="contact_info"
-            class="w-full px-4 py-2 bg-input border border-border rounded-md text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
-            placeholder="Enter your email"
-          />
-          @if (loginForm.get('contact_info')?.touched && loginForm.get('contact_info')?.invalid) {
-            <p class="mt-1 text-sm text-destructive">Valid email is required</p>
-          }
+    <!-- Right Side - Form -->
+    <div class="auth-form-container">
+      <div class="auth-form-wrapper">
+        <div class="auth-form-header">
+          <h2>Sign In</h2>
+          <p>Enter your credentials to access your account</p>
         </div>
 
-        <div>
-          <label for="password" class="block text-sm font-medium text-foreground mb-2">
-            Password
-          </label>
-          <input
-            id="password"
-            type="password"
-            formControlName="password"
-            class="w-full px-4 py-2 bg-input border border-border rounded-md text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
-            placeholder="Enter your password"
-          />
-          @if (loginForm.get('password')?.touched && loginForm.get('password')?.invalid) {
-            <p class="mt-1 text-sm text-destructive">Password is required</p>
-          }
+        <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="auth-form">
+          <!-- Email Field -->
+          <div class="form-group">
+            <label for="contact_info" class="form-label">Email Address</label>
+            <input
+              id="contact_info"
+              type="email"
+              formControlName="contact_info"
+              class="form-input"
+              placeholder="you@example.com"
+              autocomplete="email"
+            />
+            @if (loginForm.get('contact_info')?.touched && loginForm.get('contact_info')?.invalid) {
+              <span class="form-error">Please enter a valid email address</span>
+            }
+          </div>
+
+          <!-- Password Field -->
+          <div class="form-group">
+            <label for="password" class="form-label">Password</label>
+            <input
+              id="password"
+              type="password"
+              formControlName="password"
+              class="form-input"
+              placeholder="Enter your password"
+              autocomplete="current-password"
+            />
+            @if (loginForm.get('password')?.touched && loginForm.get('password')?.invalid) {
+              <span class="form-error">Password is required</span>
+            }
+          </div>
+
+          <!-- Submit Button -->
+          <button
+            type="submit"
+            [disabled]="loginForm.invalid || isSubmitting"
+            class="btn btn-primary btn-lg auth-submit"
+          >
+            @if (!isSubmitting) {
+              Sign In
+            } @else {
+              <span class="btn-loading">
+                <span class="spinner"></span>
+                Signing in...
+              </span>
+            }
+          </button>
+        </form>
+
+        <div class="auth-divider">
+          <span>New to NeighborHelp?</span>
         </div>
 
-        <button
-          type="submit"
-          [disabled]="loginForm.invalid || isSubmitting"
-          class="w-full bg-primary text-primary-foreground py-3 px-4 rounded-md font-medium hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-md"
-        >
-          {{ isSubmitting ? 'Signing In...' : 'Sign In' }}
-        </button>
-      </form>
+        <div class="auth-alt-action">
+          <a routerLink="/register" class="btn btn-secondary">Create an Account</a>
+        </div>
 
-      <div class="mt-6 text-center">
-        <p class="text-sm text-muted-foreground">
-          Don't have an account?
-          <a routerLink="/register" class="text-primary font-medium hover:underline">
-            Create Account
-          </a>
+        <p class="auth-footer-text">
+          <a routerLink="/"> Back to Home</a>
         </p>
       </div>
     </div>

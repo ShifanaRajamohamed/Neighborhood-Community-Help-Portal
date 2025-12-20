@@ -1,0 +1,176 @@
+<!-- Landing Page - Professional, Calm, Enterprise-Grade -->
+<div class="landing">
+  <!-- Header/Navigation -->
+  <header class="header">
+    <div class="container">
+      <nav class="nav">
+        <a routerLink="/" class="logo">
+          <span class="logo-icon">🏘️</span>
+          <span class="logo-text">NeighborHelp</span>
+        </a>
+        <div class="nav-links">
+          <a routerLink="/login" class="btn btn-secondary">Sign In</a>
+          <a routerLink="/register" class="btn btn-primary">Get Started</a>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="container">
+      <div class="hero-content">
+        <span class="hero-badge">Community-Powered Support</span>
+        <h1 class="hero-title">Your Neighborhood,<br>Working Together</h1>
+        <p class="hero-text">
+          Connect with neighbors who need help—or offer yours. A simple, trusted platform 
+          for community mutual aid that brings neighborhoods closer together.
+        </p>
+        <div class="hero-actions">
+          <a routerLink="/register" class="btn btn-primary btn-lg">Create Free Account</a>
+          <a routerLink="/login" class="btn btn-secondary btn-lg">Sign In</a>
+        </div>
+        <p class="hero-note">Free for residents. No credit card required.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Stats Section -->
+  <section class="stats-section">
+    <div class="container">
+      <div class="stats-grid">
+        @for (stat of stats; track stat.label) {
+          <div class="stat-item">
+            <span class="stat-value">{{ stat.value }}</span>
+            <span class="stat-label">{{ stat.label }}</span>
+          </div>
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- Problem/Solution Section -->
+  <section class="section">
+    <div class="container">
+      <div class="problem-solution">
+        <div class="problem">
+          <h2>The Challenge</h2>
+          <p>
+            Many neighbors need occasional help—picking up groceries, getting a ride to appointments, 
+            or assistance with small tasks. But they don't know who to ask, and existing platforms 
+            feel impersonal or charge high fees.
+          </p>
+        </div>
+        <div class="solution">
+          <h2>Our Approach</h2>
+          <p>
+            NeighborHelp connects you directly with people in your neighborhood. No middlemen, 
+            no fees, no strangers from across town. Just real neighbors helping each other, 
+            building trust one request at a time.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section class="section features-section">
+    <div class="container">
+      <div class="section-header">
+        <h2>Built for Real Communities</h2>
+        <p>Everything you need to give and receive help in your neighborhood.</p>
+      </div>
+      <div class="features-grid">
+        @for (feature of features; track feature.title) {
+          <div class="feature-card">
+            <span class="feature-icon">{{ feature.icon }}</span>
+            <h3 class="feature-title">{{ feature.title }}</h3>
+            <p class="feature-description">{{ feature.description }}</p>
+          </div>
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works Section -->
+  <section class="section how-it-works-section">
+    <div class="container">
+      <div class="section-header">
+        <h2>How It Works</h2>
+        <p>Get started in minutes. Help your first neighbor today.</p>
+      </div>
+      <div class="steps-grid">
+        @for (step of howItWorks; track step.step) {
+          <div class="step-card">
+            <span class="step-number">{{ step.step }}</span>
+            <h3 class="step-title">{{ step.title }}</h3>
+            <p class="step-description">{{ step.description }}</p>
+          </div>
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- Trust Section -->
+  <section class="section trust-section">
+    <div class="container">
+      <div class="trust-content">
+        <h2>Built on Trust</h2>
+        <p>
+          Every account is verified. Every interaction is tracked. Community ratings 
+          help you know who you're working with. We take safety seriously so you 
+          can focus on helping.
+        </p>
+        <div class="trust-features">
+          <div class="trust-item">
+            <span class="trust-icon">✓</span>
+            <span>Email Verification</span>
+          </div>
+          <div class="trust-item">
+            <span class="trust-icon">✓</span>
+            <span>Request History</span>
+          </div>
+          <div class="trust-item">
+            <span class="trust-icon">✓</span>
+            <span>Community Ratings</span>
+          </div>
+          <div class="trust-item">
+            <span class="trust-icon">✓</span>
+            <span>Status Tracking</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section class="section cta-section">
+    <div class="container">
+      <div class="cta-content">
+        <h2>Ready to Help Your Community?</h2>
+        <p>Join thousands of neighbors already making a difference.</p>
+        <div class="cta-actions">
+          <a routerLink="/register" class="btn btn-primary btn-lg">Create Free Account</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-brand">
+          <span class="logo-icon">🏘️</span>
+          <span class="logo-text">NeighborHelp</span>
+        </div>
+        <p class="footer-text">
+          Building stronger neighborhoods, one helping hand at a time.
+        </p>
+        <p class="footer-copyright">
+          © 2024 NeighborHelp. Made for communities.
+        </p>
+      </div>
+    </div>
+  </footer>
+</div>

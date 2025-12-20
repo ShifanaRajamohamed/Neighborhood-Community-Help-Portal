@@ -28,7 +28,7 @@ export class LoginComponent implements OnInit {
     private router: Router,
     private route: ActivatedRoute,
     private snackBar: MatSnackBar
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.loginForm = this.fb.group({
@@ -52,15 +52,18 @@ export class LoginComponent implements OnInit {
         if (response.success) {
           this.snackBar.open('Login successful!', 'Close', { duration: 2000 });
           setTimeout(() => {
-            this.isSubmitting = false;
             this.router.navigate([this.returnUrl]);
           }, 100);
         } else {
-          this.isSubmitting = false;
+          setTimeout(() => {
+            this.isSubmitting = false;
+          });
         }
       },
       error: (error) => {
-        this.isSubmitting = false;
+        setTimeout(() => {
+          this.isSubmitting = false;
+        });
         const message = error.error?.error || 'Login failed. Please check your credentials.';
         this.snackBar.open(message, 'Close', { duration: 5000 });
       }

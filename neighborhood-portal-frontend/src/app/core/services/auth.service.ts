@@ -26,7 +26,7 @@ export class AuthService {
     if (!isPlatformBrowser(this.platformId)) {
       return;
     }
-    
+
     const token = localStorage.getItem(this.TOKEN_KEY);
     const userJson = localStorage.getItem(this.USER_KEY);
 

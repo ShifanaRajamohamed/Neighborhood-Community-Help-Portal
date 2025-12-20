@@ -36,7 +36,7 @@ export class RegistrationComponent implements OnInit {
     private authService: AuthService,
     private router: Router,
     private snackBar: MatSnackBar
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.registrationForm = this.fb.group({

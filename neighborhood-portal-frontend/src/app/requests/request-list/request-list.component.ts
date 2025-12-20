@@ -38,7 +38,7 @@ export class RequestListComponent implements OnInit {
     private authService: AuthService,
     private snackBar: MatSnackBar,
     private cdr: ChangeDetectorRef
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     const user = this.authService.getCurrentUser();

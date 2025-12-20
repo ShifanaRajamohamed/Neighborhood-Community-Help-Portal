@@ -41,7 +41,44 @@ export class RequestService {
     return rows[0] as HelpRequest;
   }
 
-  async getAllRequests(filters?: { status?: RequestStatus; resident_id?: number; helper_id?: number }): Promise<HelpRequest[]> {
+  async getAllRequests(filters?: {
+    status?: RequestStatus;
+    resident_id?: number;
+    helper_id?: number;
+    limit?: number;
+    offset?: number;
+  }): Promise<{ requests: HelpRequest[]; total: number }> {
+    // Count total matching records first
+    let countQuery = `
+      SELECT COUNT(*) as total
+      FROM HelpRequests
+      WHERE 1=1
+    `;
+    const countParams: any[] = [];
+
+    if (filters?.status) {
+      countQuery += ' AND status = ?';
+      countParams.push(filters.status);
+    }
+
+    if (filters?.resident_id) {
+      countQuery += ' AND resident_id = ?';
+      countParams.push(filters.resident_id);
+    }
+
+    if (filters?.helper_id !== undefined) {
+      if (filters.helper_id === null) {
+        countQuery += ' AND helper_id IS NULL';
+      } else {
+        countQuery += ' AND helper_id = ?';
+        countParams.push(filters.helper_id);
+      }
+    }
+
+    const [countRows] = await pool.execute<RowDataPacket[]>(countQuery, countParams);
+    const total = countRows[0].total;
+
+    // Get paginated results
     let query = `
       SELECT id, resident_id, helper_id, title, description, category, status, attachments, created_at
       FROM HelpRequests
@@ -70,8 +107,18 @@ export class RequestService {
 
     query += ' ORDER BY created_at DESC';
 
+    // Add pagination - MySQL prepared statements have issues with LIMIT/OFFSET as params
+    // So we cast to integers and use string interpolation safely
+    const limit = Number(filters?.limit) || 50;
+    const offset = Number(filters?.offset) || 0;
+    query += ` LIMIT ${Math.floor(limit)} OFFSET ${Math.floor(offset)}`;
+
     const [rows] = await pool.execute<RowDataPacket[]>(query, params);
-    return rows as HelpRequest[];
+
+    return {
+      requests: rows as HelpRequest[],
+      total
+    };
   }
 
   async updateRequestStatus(

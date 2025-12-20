@@ -6,8 +6,7 @@ import { UserRole } from './shared/models/types';
 export const routes: Routes = [
   {
     path: '',
-    redirectTo: '/login',
-    pathMatch: 'full'
+    loadComponent: () => import('./landing/landing.component').then(m => m.LandingComponent)
   },
   {
     path: 'login',
