@@ -64,4 +64,4 @@ import { RouterLink } from '@angular/router';
     }
   `]
 })
-export class UnauthorizedComponent {}
+export class UnauthorizedComponent { }

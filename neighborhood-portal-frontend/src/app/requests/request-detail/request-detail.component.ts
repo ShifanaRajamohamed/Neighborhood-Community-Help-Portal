@@ -40,7 +40,7 @@ export class RequestDetailComponent implements OnInit {
     private authService: AuthService,
     private snackBar: MatSnackBar,
     private cdr: ChangeDetectorRef
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     const user = this.authService.getCurrentUser();
@@ -96,7 +96,7 @@ export class RequestDetailComponent implements OnInit {
 
   acceptRequest(): void {
     if (!this.request) return;
-    
+
     this.requestService.acceptRequest(this.request.id).subscribe({
       next: (response) => {
         if (response.success) {
@@ -113,7 +113,7 @@ export class RequestDetailComponent implements OnInit {
 
   startProgress(): void {
     if (!this.request) return;
-    
+
     this.requestService.startProgress(this.request.id).subscribe({
       next: (response) => {
         if (response.success) {
@@ -130,7 +130,7 @@ export class RequestDetailComponent implements OnInit {
 
   completeRequest(): void {
     if (!this.request) return;
-    
+
     this.requestService.completeRequest(this.request.id).subscribe({
       next: (response) => {
         if (response.success) {

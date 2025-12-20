@@ -12,7 +12,7 @@
           <a routerLink="/dashboard" class="nav-link active">Dashboard</a>
           <a routerLink="/requests" class="nav-link">All Requests</a>
           @if (isResident) {
-            <a routerLink="/requests/new" class="nav-link">New Request</a>
+          <a routerLink="/requests/new" class="nav-link">New Request</a>
           }
         </nav>
         <div class="header-actions">
@@ -33,16 +33,16 @@
       <div class="page-header">
         <h1 class="page-title">
           @if (isResident) {
-            My Help Requests
+          My Help Requests
           } @else {
-            Helper Dashboard
+          Helper Dashboard
           }
         </h1>
         <p class="page-subtitle">
           @if (isResident) {
-            Manage your requests and track their progress
+          Manage your requests and track their progress
           } @else {
-            View and accept requests from neighbors who need help
+          View and accept requests from neighbors who need help
           }
         </p>
       </div>
@@ -73,9 +73,9 @@
       </div>
       <div class="quick-actions">
         @if (isResident) {
-          <a routerLink="/requests/new" class="btn btn-primary">
-            <span>+</span> Create New Request
-          </a>
+        <a routerLink="/requests/new" class="btn btn-primary">
+          <span>+</span> Create New Request
+        </a>
         }
         <a routerLink="/requests" class="btn btn-secondary">View All Requests</a>
       </div>
@@ -88,60 +88,60 @@
 
       <div class="card">
         @if (requests.length > 0) {
-          <div class="table-container">
-            <table class="data-table">
-              <thead>
-                <tr>
-                  <th>Title</th>
-                  <th>Category</th>
-                  <th>Status</th>
-                  <th>Date</th>
-                  <th>Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                @for (request of requests; track request.id) {
-                  <tr>
-                    <td>
-                      <span class="request-title">{{ request.title }}</span>
-                    </td>
-                    <td>
-                      <span class="request-category">{{ request.category }}</span>
-                    </td>
-                    <td>
-                      <span class="status-chip" [ngClass]="'status-' + request.status.replace('_', '-')">
-                        {{ request.status.replace('_', ' ') }}
-                      </span>
-                    </td>
-                    <td>
-                      <span class="request-date">{{ request.created_at | date:'mediumDate' }}</span>
-                    </td>
-                    <td>
-                      <a [routerLink]="['/requests', request.id]" class="btn btn-sm btn-secondary">
-                        View
-                      </a>
-                    </td>
-                  </tr>
-                }
-              </tbody>
-            </table>
-          </div>
-        } @else {
-          <div class="empty-state">
-            <p class="empty-state-title">No requests yet</p>
-            <p class="empty-state-text">
-              @if (isResident) {
-                Create your first help request to get started.
-              } @else {
-                Browse available requests to help your neighbors.
+        <div class="table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Title</th>
+                <th>Category</th>
+                <th>Status</th>
+                <th>Date</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (request of requests; track request.id) {
+              <tr>
+                <td>
+                  <span class="request-title">{{ request.title }}</span>
+                </td>
+                <td>
+                  <span class="request-category">{{ request.category }}</span>
+                </td>
+                <td>
+                  <span class="status-chip" [ngClass]="'status-' + request.status.replace('_', '-')">
+                    {{ request.status.replace('_', ' ') }}
+                  </span>
+                </td>
+                <td>
+                  <span class="request-date">{{ request.created_at | date:'mediumDate' }}</span>
+                </td>
+                <td>
+                  <a [routerLink]="['/requests', request.id]" class="btn btn-sm btn-secondary">
+                    View
+                  </a>
+                </td>
+              </tr>
               }
-            </p>
+            </tbody>
+          </table>
+        </div>
+        } @else {
+        <div class="empty-state">
+          <p class="empty-state-title">No requests yet</p>
+          <p class="empty-state-text">
             @if (isResident) {
-              <a routerLink="/requests/new" class="btn btn-primary">Create Request</a>
+            Create your first help request to get started.
             } @else {
-              <a routerLink="/requests" class="btn btn-primary">Browse Requests</a>
+            Browse available requests to help your neighbors.
             }
-          </div>
+          </p>
+          @if (isResident) {
+          <a routerLink="/requests/new" class="btn btn-primary">Create Request</a>
+          } @else {
+          <a routerLink="/requests" class="btn btn-primary">Browse Requests</a>
+          }
+        </div>
         }
       </div>
     </div>

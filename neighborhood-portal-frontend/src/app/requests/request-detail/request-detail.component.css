@@ -30,7 +30,10 @@
   color: var(--color-fg);
 }
 
-.logo-icon { font-size: var(--text-xl); }
+.logo-icon {
+  font-size: var(--text-xl);
+}
+
 .logo-text {
   font-size: var(--text-lg);
   font-weight: var(--font-semibold);
@@ -88,7 +91,9 @@
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* Request Header */

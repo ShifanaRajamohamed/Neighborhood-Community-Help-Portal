@@ -37,48 +37,34 @@
           <!-- Title Field -->
           <div class="form-group">
             <label for="title" class="form-label">Request Title</label>
-            <input
-              id="title"
-              type="text"
-              formControlName="title"
-              class="form-input"
-              placeholder="e.g., Need help moving furniture"
-            />
+            <input id="title" type="text" formControlName="title" class="form-input"
+              placeholder="e.g., Need help moving furniture" />
             @if (requestForm.get('title')?.touched && requestForm.get('title')?.invalid) {
-              <span class="form-error">Title must be at least 5 characters</span>
+            <span class="form-error">Title must be at least 5 characters</span>
             }
           </div>
 
           <!-- Category Field -->
           <div class="form-group">
             <label for="category" class="form-label">Category</label>
-            <select
-              id="category"
-              formControlName="category"
-              class="form-input form-select"
-            >
+            <select id="category" formControlName="category" class="form-input form-select">
               <option value="" disabled>Select a category</option>
               @for (cat of categories; track cat) {
-                <option [value]="cat">{{ cat }}</option>
+              <option [value]="cat">{{ cat }}</option>
               }
             </select>
             @if (requestForm.get('category')?.touched && requestForm.get('category')?.invalid) {
-              <span class="form-error">Please select a category</span>
+            <span class="form-error">Please select a category</span>
             }
           </div>
 
           <!-- Description Field -->
           <div class="form-group">
             <label for="description" class="form-label">Description</label>
-            <textarea
-              id="description"
-              formControlName="description"
-              class="form-input form-textarea"
-              rows="5"
-              placeholder="Provide details about what you need help with, when you need it, and any other relevant information..."
-            ></textarea>
+            <textarea id="description" formControlName="description" class="form-input form-textarea" rows="5"
+              placeholder="Provide details about what you need help with, when you need it, and any other relevant information..."></textarea>
             @if (requestForm.get('description')?.touched && requestForm.get('description')?.invalid) {
-              <span class="form-error">Description must be at least 10 characters</span>
+            <span class="form-error">Description must be at least 10 characters</span>
             }
           </div>
 
@@ -87,30 +73,21 @@
             <label for="attachments" class="form-label">
               Attachments <span class="form-label-optional">(Optional)</span>
             </label>
-            <input
-              id="attachments"
-              type="text"
-              formControlName="attachments"
-              class="form-input"
-              placeholder="Add any reference links or URLs"
-            />
+            <input id="attachments" type="text" formControlName="attachments" class="form-input"
+              placeholder="Add any reference links or URLs" />
           </div>
 
           <!-- Form Actions -->
           <div class="form-actions">
             <a routerLink="/dashboard" class="btn btn-secondary">Cancel</a>
-            <button
-              type="submit"
-              [disabled]="requestForm.invalid || isSubmitting"
-              class="btn btn-primary"
-            >
+            <button type="submit" [disabled]="requestForm.invalid || isSubmitting" class="btn btn-primary">
               @if (!isSubmitting) {
-                Submit Request
+              Submit Request
               } @else {
-                <span class="btn-loading">
-                  <span class="spinner"></span>
-                  Submitting...
-                </span>
+              <span class="btn-loading">
+                <span class="spinner"></span>
+                Submitting...
+              </span>
               }
             </button>
           </div>

@@ -270,7 +270,7 @@
   margin-bottom: var(--space-4);
 }
 
-.trust-content > p {
+.trust-content>p {
   font-size: var(--text-lg);
   color: var(--color-fg-muted);
   margin-bottom: var(--space-8);
@@ -313,7 +313,7 @@
   margin-bottom: var(--space-3);
 }
 
-.cta-content > p {
+.cta-content>p {
   font-size: var(--text-lg);
   color: var(--color-fg-muted);
   margin-bottom: var(--space-8);
@@ -349,6 +349,7 @@
 
 /* Responsive */
 @media (max-width: 1024px) {
+
   .features-grid,
   .steps-grid {
     grid-template-columns: repeat(2, 1fr);

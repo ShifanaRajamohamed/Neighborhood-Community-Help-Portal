@@ -23,116 +23,120 @@
   <main class="page-main">
     <div class="container container-md">
       @if (loading) {
-        <div class="loading-state">
-          <div class="spinner-lg"></div>
-          <p>Loading request details...</p>
-        </div>
+      <div class="loading-state">
+        <div class="spinner-lg"></div>
+        <p>Loading request details...</p>
+      </div>
       } @else if (request) {
-        <!-- Request Header -->
-        <div class="request-header">
-          <div class="request-header-top">
-            <span class="category-tag">{{ request.category }}</span>
-            <span class="status-chip" [ngClass]="getStatusClass(request.status)">
-              {{ getStatusLabel(request.status) }}
-            </span>
+      <!-- Request Header -->
+      <div class="request-header">
+        <div class="request-header-top">
+          <span class="category-tag">{{ request.category }}</span>
+          <span class="status-chip" [ngClass]="getStatusClass(request.status)">
+            {{ getStatusLabel(request.status) }}
+          </span>
+        </div>
+        <h1 class="request-title">{{ request.title }}</h1>
+        <div class="request-meta">
+          <span>Created {{ request.created_at | date:'mediumDate' }}</span>
+          <span></span>
+          <span>{{ request.location }}</span>
+        </div>
+      </div>
+
+      <!-- Status Stepper -->
+      <div class="status-stepper">
+        <div class="stepper-track">
+          <div class="stepper-progress" [style.width]="getStepperProgress()"></div>
+        </div>
+        <div class="stepper-steps">
+          <div class="stepper-step" [class.active]="isStepActive('pending')"
+            [class.completed]="isStepCompleted('pending')">
+            <div class="step-dot"></div>
+            <span class="step-label">Pending</span>
           </div>
-          <h1 class="request-title">{{ request.title }}</h1>
-          <div class="request-meta">
-            <span>Created {{ request.created_at | date:'mediumDate' }}</span>
-            <span></span>
-            <span>{{ request.location }}</span>
+          <div class="stepper-step" [class.active]="isStepActive('accepted')"
+            [class.completed]="isStepCompleted('accepted')">
+            <div class="step-dot"></div>
+            <span class="step-label">Accepted</span>
+          </div>
+          <div class="stepper-step" [class.active]="isStepActive('in_progress')"
+            [class.completed]="isStepCompleted('in_progress')">
+            <div class="step-dot"></div>
+            <span class="step-label">In Progress</span>
+          </div>
+          <div class="stepper-step" [class.active]="isStepActive('completed')"
+            [class.completed]="isStepCompleted('completed')">
+            <div class="step-dot"></div>
+            <span class="step-label">Completed</span>
           </div>
         </div>
+      </div>
 
-        <!-- Status Stepper -->
-        <div class="status-stepper">
-          <div class="stepper-track">
-            <div class="stepper-progress" [style.width]="getStepperProgress()"></div>
-          </div>
-          <div class="stepper-steps">
-            <div class="stepper-step" [class.active]="isStepActive('pending')" [class.completed]="isStepCompleted('pending')">
-              <div class="step-dot"></div>
-              <span class="step-label">Pending</span>
-            </div>
-            <div class="stepper-step" [class.active]="isStepActive('accepted')" [class.completed]="isStepCompleted('accepted')">
-              <div class="step-dot"></div>
-              <span class="step-label">Accepted</span>
-            </div>
-            <div class="stepper-step" [class.active]="isStepActive('in_progress')" [class.completed]="isStepCompleted('in_progress')">
-              <div class="step-dot"></div>
-              <span class="step-label">In Progress</span>
-            </div>
-            <div class="stepper-step" [class.active]="isStepActive('completed')" [class.completed]="isStepCompleted('completed')">
-              <div class="step-dot"></div>
-              <span class="step-label">Completed</span>
-            </div>
-          </div>
+      <!-- Request Details Card -->
+      <div class="card card-padded">
+        <h2 class="section-title">Description</h2>
+        <p class="request-description">{{ request.description }}</p>
+
+        @if (request.attachments) {
+        <div class="detail-section">
+          <h3 class="detail-label">Attachments</h3>
+          <p class="detail-value">{{ request.attachments }}</p>
         </div>
-
-        <!-- Request Details Card -->
-        <div class="card card-padded">
-          <h2 class="section-title">Description</h2>
-          <p class="request-description">{{ request.description }}</p>
-
-          @if (request.attachments) {
-            <div class="detail-section">
-              <h3 class="detail-label">Attachments</h3>
-              <p class="detail-value">{{ request.attachments }}</p>
-            </div>
-          }
-
-          <hr class="divider" />
-
-          <!-- Request Info Grid -->
-          <div class="detail-grid">
-            <div class="detail-item">
-              <span class="detail-label">Requested By</span>
-              <span class="detail-value">{{ request.resident_name || 'N/A' }}</span>
-            </div>
-            <div class="detail-item">
-              <span class="detail-label">Helper</span>
-              <span class="detail-value">{{ request.helper_name || 'Not assigned' }}</span>
-            </div>
-            <div class="detail-item">
-              <span class="detail-label">Location</span>
-              <span class="detail-value">{{ request.location }}</span>
-            </div>
-            <div class="detail-item">
-              <span class="detail-label">Last Updated</span>
-              <span class="detail-value">{{ request.updated_at | date:'medium' }}</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Action Buttons -->
-        @if (currentUserRole === 'helper') {
-          <div class="action-card">
-            @if (request.status === 'pending') {
-              <button (click)="acceptRequest()" class="btn btn-primary btn-lg">
-                Accept This Request
-              </button>
-              <p class="action-hint">Accept to start helping this neighbor</p>
-            }
-            @if (request.status === 'accepted' && request.helper_id === currentUserId) {
-              <button (click)="startProgress()" class="btn btn-primary btn-lg">
-                Mark as In Progress
-              </button>
-              <p class="action-hint">Let the resident know you've started working on it</p>
-            }
-            @if (request.status === 'in_progress' && request.helper_id === currentUserId) {
-              <button (click)="completeRequest()" class="btn btn-primary btn-lg">
-                Mark as Completed
-              </button>
-              <p class="action-hint">Complete the request when you've finished helping</p>
-            }
-            @if (request.status === 'completed') {
-              <div class="completion-message">
-                <span class="completion-icon"></span>
-                <span>This request has been completed</span>
-              </div>
-            }
-          </div>
         }
+
+        <hr class="divider" />
+
+        <!-- Request Info Grid -->
+        <div class="detail-grid">
+          <div class="detail-item">
+            <span class="detail-label">Requested By</span>
+            <span class="detail-value">{{ request.resident_name || 'N/A' }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Helper</span>
+            <span class="detail-value">{{ request.helper_name || 'Not assigned' }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Location</span>
+            <span class="detail-value">{{ request.location }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Last Updated</span>
+            <span class="detail-value">{{ request.updated_at | date:'medium' }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      @if (currentUserRole === 'helper') {
+      <div class="action-card">
+        @if (request.status === 'pending') {
+        <button (click)="acceptRequest()" class="btn btn-primary btn-lg">
+          Accept This Request
+        </button>
+        <p class="action-hint">Accept to start helping this neighbor</p>
+        }
+        @if (request.status === 'accepted' && request.helper_id === currentUserId) {
+        <button (click)="startProgress()" class="btn btn-primary btn-lg">
+          Mark as In Progress
+        </button>
+        <p class="action-hint">Let the resident know you've started working on it</p>
+        }
+        @if (request.status === 'in_progress' && request.helper_id === currentUserId) {
+        <button (click)="completeRequest()" class="btn btn-primary btn-lg">
+          Mark as Completed
+        </button>
+        <p class="action-hint">Complete the request when you've finished helping</p>
+        }
+        @if (request.status === 'completed') {
+        <div class="completion-message">
+          <span class="completion-icon"></span>
+          <span>This request has been completed</span>
+        </div>
+        }
+      </div>
+      }
       }
     </div>
   </main>

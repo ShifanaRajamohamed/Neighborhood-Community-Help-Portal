@@ -41,48 +41,30 @@
           <!-- Name Field -->
           <div class="form-group">
             <label for="name" class="form-label">Full Name</label>
-            <input
-              id="name"
-              type="text"
-              formControlName="name"
-              class="form-input"
-              placeholder="John Doe"
-              autocomplete="name"
-            />
+            <input id="name" type="text" formControlName="name" class="form-input" placeholder="John Doe"
+              autocomplete="name" />
             @if (registrationForm.get('name')?.touched && registrationForm.get('name')?.invalid) {
-              <span class="form-error">Name must be at least 2 characters</span>
+            <span class="form-error">Name must be at least 2 characters</span>
             }
           </div>
 
           <!-- Email Field -->
           <div class="form-group">
             <label for="contact_info" class="form-label">Email Address</label>
-            <input
-              id="contact_info"
-              type="email"
-              formControlName="contact_info"
-              class="form-input"
-              placeholder="you@example.com"
-              autocomplete="email"
-            />
+            <input id="contact_info" type="email" formControlName="contact_info" class="form-input"
+              placeholder="you@example.com" autocomplete="email" />
             @if (registrationForm.get('contact_info')?.touched && registrationForm.get('contact_info')?.invalid) {
-              <span class="form-error">Please enter a valid email address</span>
+            <span class="form-error">Please enter a valid email address</span>
             }
           </div>
 
           <!-- Location Field -->
           <div class="form-group">
             <label for="location" class="form-label">Neighborhood / Address</label>
-            <input
-              id="location"
-              type="text"
-              formControlName="location"
-              class="form-input"
-              placeholder="e.g., Downtown, Main Street Area"
-              autocomplete="street-address"
-            />
+            <input id="location" type="text" formControlName="location" class="form-input"
+              placeholder="e.g., Downtown, Main Street Area" autocomplete="street-address" />
             @if (registrationForm.get('location')?.touched && registrationForm.get('location')?.invalid) {
-              <span class="form-error">Location must be at least 5 characters</span>
+            <span class="form-error">Location must be at least 5 characters</span>
             }
           </div>
 
@@ -91,15 +73,10 @@
             <label class="form-label">I want to</label>
             <div class="role-options">
               @for (role of roles; track role.value) {
-                <label class="role-option" [class.selected]="registrationForm.get('role')?.value === role.value">
-                  <input
-                    type="radio"
-                    formControlName="role"
-                    [value]="role.value"
-                    class="role-radio"
-                  />
-                  <span class="role-label">{{ role.label }}</span>
-                </label>
+              <label class="role-option" [class.selected]="registrationForm.get('role')?.value === role.value">
+                <input type="radio" formControlName="role" [value]="role.value" class="role-radio" />
+                <span class="role-label">{{ role.label }}</span>
+              </label>
               }
             </div>
           </div>
@@ -108,48 +85,33 @@
           <div class="form-row">
             <div class="form-group">
               <label for="password" class="form-label">Password</label>
-              <input
-                id="password"
-                type="password"
-                formControlName="password"
-                class="form-input"
-                placeholder="Min 6 characters"
-                autocomplete="new-password"
-              />
+              <input id="password" type="password" formControlName="password" class="form-input"
+                placeholder="Min 6 characters" autocomplete="new-password" />
               @if (registrationForm.get('password')?.touched && registrationForm.get('password')?.invalid) {
-                <span class="form-error">Min 6 characters required</span>
+              <span class="form-error">Min 6 characters required</span>
               }
             </div>
 
             <div class="form-group">
               <label for="confirmPassword" class="form-label">Confirm Password</label>
-              <input
-                id="confirmPassword"
-                type="password"
-                formControlName="confirmPassword"
-                class="form-input"
-                placeholder="Repeat password"
-                autocomplete="new-password"
-              />
+              <input id="confirmPassword" type="password" formControlName="confirmPassword" class="form-input"
+                placeholder="Repeat password" autocomplete="new-password" />
               @if (registrationForm.hasError('passwordMismatch') && registrationForm.get('confirmPassword')?.touched) {
-                <span class="form-error">Passwords do not match</span>
+              <span class="form-error">Passwords do not match</span>
               }
             </div>
           </div>
 
           <!-- Submit Button -->
-          <button
-            type="submit"
-            [disabled]="registrationForm.invalid || isSubmitting"
-            class="btn btn-primary btn-lg auth-submit"
-          >
+          <button type="submit" [disabled]="registrationForm.invalid || isSubmitting"
+            class="btn btn-primary btn-lg auth-submit">
             @if (!isSubmitting) {
-              Create Account
+            Create Account
             } @else {
-              <span class="btn-loading">
-                <span class="spinner"></span>
-                Creating account...
-              </span>
+            <span class="btn-loading">
+              <span class="spinner"></span>
+              Creating account...
+            </span>
             }
           </button>
         </form>
