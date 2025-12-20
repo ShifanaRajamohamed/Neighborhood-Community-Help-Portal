@@ -1,0 +1,73 @@
+<div class="request-list-container">
+  <div class="header flex-between">
+    <h1>Help Requests</h1>
+    @if (currentUserRole === 'resident') {
+      <button mat-raised-button color="primary" routerLink="/requests/new">
+        Create New Request
+      </button>
+    }
+  </div>
+
+  @if (loading) {
+    <div class="loading-container">
+      <mat-spinner></mat-spinner>
+    </div>
+  } @else {
+    @if (requests.length === 0) {
+      <mat-card class="empty-state">
+        <p>No requests found</p>
+        @if (currentUserRole === 'resident') {
+          <button mat-raised-button color="primary" routerLink="/requests/new">
+            Create Your First Request
+          </button>
+        }
+      </mat-card>
+    } @else {
+      <div class="request-grid">
+        @for (request of requests; track request.id) {
+          <mat-card class="request-card">
+            <mat-card-header>
+              <mat-card-title>{{ request.title }}</mat-card-title>
+              <mat-card-subtitle>{{ request.category }}</mat-card-subtitle>
+            </mat-card-header>
+
+            <mat-card-content>
+              <p class="description">{{ request.description }}</p>
+
+              <div class="meta-info">
+                <span class="status-chip" [ngClass]="getStatusClass(request.status)">
+                  {{ getStatusLabel(request.status) }}
+                </span>
+                <span class="date">{{ request.created_at | date: 'short' }}</span>
+              </div>
+            </mat-card-content>
+
+            <mat-card-actions>
+              @if (currentUserRole === 'helper' && request.status === 'pending') {
+                <button mat-raised-button color="primary" (click)="acceptRequest(request.id)">
+                  Accept
+                </button>
+              }
+
+              @if (currentUserRole === 'helper' && request.status === 'accepted') {
+                <button mat-raised-button color="primary" (click)="startProgress(request.id)">
+                  Start Work
+                </button>
+              }
+
+              @if (currentUserRole === 'helper' && request.status === 'in_progress') {
+                <button mat-raised-button color="primary" (click)="completeRequest(request.id)">
+                  Mark Complete
+                </button>
+              }
+
+              <button mat-button [routerLink]="['/requests', request.id]">
+                View Details
+              </button>
+            </mat-card-actions>
+          </mat-card>
+        }
+      </div>
+    }
+  }
+</div>

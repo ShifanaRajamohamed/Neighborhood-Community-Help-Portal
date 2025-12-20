@@ -1,0 +1,116 @@
+<div class="min-h-screen bg-background p-6">
+  <div class="max-w-4xl mx-auto">
+    <!-- Back Button -->
+    <button 
+      (click)="goBack()" 
+      class="flex items-center gap-2 text-muted-foreground hover:text-foreground mb-6 transition-colors">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+        <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+      </svg>
+      Back to Requests
+    </button>
+
+    @if (loading) {
+      <div class="flex justify-center items-center py-20">
+        <mat-spinner diameter="48"></mat-spinner>
+      </div>
+    } @else if (request) {
+      <!-- Request Card -->
+      <div class="bg-card rounded-xl shadow-lg border border-border overflow-hidden">
+        <!-- Header -->
+        <div class="bg-primary/10 p-6 border-b border-border">
+          <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <div>
+              <h1 class="text-2xl font-bold text-foreground">{{ request.title }}</h1>
+              <p class="text-muted-foreground mt-1">{{ request.category }}</p>
+            </div>
+            <span 
+              class="inline-flex px-4 py-2 rounded-full text-sm font-semibold self-start"
+              [ngClass]="getStatusClass(request.status)">
+              {{ getStatusLabel(request.status) }}
+            </span>
+          </div>
+        </div>
+
+        <!-- Content -->
+        <div class="p-6 space-y-6">
+          <!-- Description -->
+          <div>
+            <h2 class="text-lg font-semibold text-foreground mb-2">Description</h2>
+            <p class="text-muted-foreground leading-relaxed">{{ request.description }}</p>
+          </div>
+
+          <hr class="border-border">
+
+          <!-- Details Grid -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <h3 class="text-sm font-medium text-muted-foreground mb-1">Created</h3>
+              <p class="text-foreground">{{ request.created_at | date: 'medium' }}</p>
+            </div>
+            <div>
+              <h3 class="text-sm font-medium text-muted-foreground mb-1">Request ID</h3>
+              <p class="text-foreground">#{{ request.id }}</p>
+            </div>
+            <div>
+              <h3 class="text-sm font-medium text-muted-foreground mb-1">Status</h3>
+              <p class="text-foreground">{{ getStatusLabel(request.status) }}</p>
+            </div>
+          </div>
+
+          @if (request.helper_id) {
+            <hr class="border-border">
+            <div>
+              <h3 class="text-sm font-medium text-muted-foreground mb-1">Assigned Helper</h3>
+              <p class="text-foreground">Helper ID: {{ request.helper_id }}</p>
+            </div>
+          }
+        </div>
+
+        <!-- Actions -->
+        <div class="bg-muted/30 p-6 border-t border-border">
+          <div class="flex flex-wrap gap-3">
+            @if (currentUserRole === 'helper' && request.status === 'pending') {
+              <button 
+                (click)="acceptRequest()"
+                class="px-6 py-2 bg-primary text-primary-foreground rounded-lg font-medium hover:bg-primary/90 transition-colors">
+                Accept Request
+              </button>
+            }
+
+            @if (currentUserRole === 'helper' && request.status === 'accepted') {
+              <button 
+                (click)="startProgress()"
+                class="px-6 py-2 bg-primary text-primary-foreground rounded-lg font-medium hover:bg-primary/90 transition-colors">
+                Start Work
+              </button>
+            }
+
+            @if (currentUserRole === 'helper' && request.status === 'in_progress') {
+              <button 
+                (click)="completeRequest()"
+                class="px-6 py-2 bg-green-600 text-white rounded-lg font-medium hover:bg-green-700 transition-colors">
+                Mark Complete
+              </button>
+            }
+
+            <button 
+              (click)="goBack()"
+              class="px-6 py-2 bg-secondary text-secondary-foreground rounded-lg font-medium hover:bg-secondary/80 transition-colors">
+              Back to List
+            </button>
+          </div>
+        </div>
+      </div>
+    } @else {
+      <div class="bg-card rounded-xl shadow-lg border border-border p-12 text-center">
+        <p class="text-muted-foreground text-lg">Request not found</p>
+        <button 
+          (click)="goBack()"
+          class="mt-4 px-6 py-2 bg-primary text-primary-foreground rounded-lg font-medium hover:bg-primary/90 transition-colors">
+          Back to Requests
+        </button>
+      </div>
+    }
+  </div>
+</div>

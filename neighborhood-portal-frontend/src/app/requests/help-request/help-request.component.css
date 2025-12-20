@@ -1,0 +1,28 @@
+.request-container {
+  max-width: 800px;
+  margin: var(--spacing-xl) auto;
+  padding: var(--spacing-lg);
+}
+
+.request-card {
+  width: 100%;
+}
+
+.request-card h1 {
+  margin: 0;
+}
+
+.full-width {
+  width: 100%;
+  margin-bottom: var(--spacing-md);
+}
+
+.button-group {
+  display: flex;
+  gap: var(--spacing-md);
+  margin-top: var(--spacing-lg);
+}
+
+.button-group button {
+  flex: 1;
+}

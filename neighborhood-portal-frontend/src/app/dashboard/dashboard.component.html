@@ -1,0 +1,68 @@
+<div class="dashboard-container">
+  <header class="dashboard-header">
+    <div>
+      <h1>Welcome, {{ currentUser?.name }}</h1>
+      <p class="role-badge">{{ currentUser?.role | uppercase }}</p>
+    </div>
+    <button mat-raised-button (click)="logout()">Logout</button>
+  </header>
+
+  <div class="dashboard-stats">
+    <div class="stat-card card">
+      <h3>Total Requests</h3>
+      <p class="stat-number">{{ stats.total }}</p>
+    </div>
+
+    <div class="stat-card card">
+      <h3>Pending</h3>
+      <p class="stat-number">{{ stats.pending }}</p>
+    </div>
+
+    <div class="stat-card card">
+      <h3>In Progress</h3>
+      <p class="stat-number">{{ stats.inProgress }}</p>
+    </div>
+
+    <div class="stat-card card">
+      <h3>Completed</h3>
+      <p class="stat-number">{{ stats.completed }}</p>
+    </div>
+  </div>
+
+  <div class="dashboard-actions">
+    @if (isResident) {
+      <button mat-raised-button color="primary" routerLink="/requests/new">
+        Create New Request
+      </button>
+    }
+    <button mat-raised-button routerLink="/requests">
+      View All Requests
+    </button>
+    @if (isHelper) {
+      <button mat-raised-button color="accent" routerLink="/requests">
+        Browse Available Requests
+      </button>
+    }
+  </div>
+
+  @if (requests.length > 0) {
+    <div class="recent-requests">
+      <h2>Recent Requests</h2>
+      <div class="request-table">
+        @for (request of requests; track request.id) {
+          <div class="request-row card">
+            <div class="request-info">
+              <h3>{{ request.title }}</h3>
+              <p>{{ request.category }}</p>
+            </div>
+            <div class="request-status">
+              <span class="status-chip" [ngClass]="'status-' + request.status.replace('_', '-')">
+                {{ request.status.replace('_', ' ') | uppercase }}
+              </span>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  }
+</div>
