@@ -46,9 +46,9 @@ export async function getAllRequests(filters: AdminRequestFilters): Promise<Admi
         u1.location as resident_location,
         u2.name as helper_name,
         u2.contact_info as helper_contact
-      FROM help_requests r
-      LEFT JOIN users u1 ON r.resident_id = u1.id
-      LEFT JOIN users u2 ON r.helper_id = u2.id
+      FROM HelpRequests r
+      LEFT JOIN Users u1 ON r.resident_id = u1.id
+      LEFT JOIN Users u2 ON r.helper_id = u2.id
       WHERE 1=1
     `;
 
@@ -90,9 +90,9 @@ export async function getRequestById(id: number): Promise<AdminRequest | null> {
         u1.location as resident_location,
         u2.name as helper_name,
         u2.contact_info as helper_contact
-      FROM help_requests r
-      LEFT JOIN users u1 ON r.resident_id = u1.id
-      LEFT JOIN users u2 ON r.helper_id = u2.id
+      FROM HelpRequests r
+      LEFT JOIN Users u1 ON r.resident_id = u1.id
+      LEFT JOIN Users u2 ON r.helper_id = u2.id
       WHERE r.id = ?
     `;
 
@@ -113,7 +113,7 @@ export async function updateRequestStatus(
     await connection.beginTransaction();
 
     // Build update query
-    let query = 'UPDATE help_requests SET status = ?, updated_at = NOW()';
+    let query = 'UPDATE HelpRequests SET status = ?, updated_at = NOW()';
     const params: any[] = [status];
 
     if (helper_id !== undefined) {
@@ -155,28 +155,28 @@ export async function updateRequestStatus(
 export async function getDashboardStats(): Promise<DashboardStats> {
   // Get counts by status
   const [statusCounts] = await pool.execute<RowDataPacket[]>(`
-      SELECT 
-        COUNT(*) as total,
-        SUM(CASE WHEN status = 'pending' THEN 1 ELSE 0 END) as pending,
-        SUM(CASE WHEN status = 'accepted' THEN 1 ELSE 0 END) as accepted,
-        SUM(CASE WHEN status = 'in_progress' THEN 1 ELSE 0 END) as in_progress,
-        SUM(CASE WHEN status = 'completed' THEN 1 ELSE 0 END) as completed
-      FROM help_requests
-    `);
+    SELECT 
+      COUNT(*) as total,
+      SUM(CASE WHEN status = 'pending' THEN 1 ELSE 0 END) as pending,
+      SUM(CASE WHEN status = 'accepted' THEN 1 ELSE 0 END) as accepted,
+      SUM(CASE WHEN status = 'in_progress' THEN 1 ELSE 0 END) as in_progress,
+      SUM(CASE WHEN status = 'completed' THEN 1 ELSE 0 END) as completed
+    FROM HelpRequests
+  `);
 
   // Get recent requests
   const [recentRequests] = await pool.execute<RowDataPacket[]>(`
-      SELECT 
-        r.id,
-        r.title,
-        r.status,
-        r.created_at,
-        u.name as resident_name
-      FROM help_requests r
-      LEFT JOIN users u ON r.resident_id = u.id
-      ORDER BY r.created_at DESC
-      LIMIT 10
-    `);
+    SELECT 
+      r.id,
+      r.title,
+      r.status,
+      r.created_at,
+      u.name as resident_name
+    FROM HelpRequests r
+    LEFT JOIN Users u ON r.resident_id = u.id
+    ORDER BY r.created_at DESC
+    LIMIT 10
+  `);
 
   const stats = statusCounts[0];
 
@@ -195,7 +195,7 @@ export async function archiveRequest(id: number): Promise<void> {
   // Note: This assumes an 'archived' field exists or you can add it
   // For now, we'll just mark it with a special status or delete it
   const [result] = await pool.execute<ResultSetHeader>(
-    'DELETE FROM help_requests WHERE id = ?',
+    'DELETE FROM HelpRequests WHERE id = ?',
     [id]
   );
 
