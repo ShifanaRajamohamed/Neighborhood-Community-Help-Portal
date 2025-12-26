@@ -1,0 +1,3 @@
+/* Minimal index.css to satisfy Angular build; Tailwind is loaded via CDN in index.html */
+html, body { height: 100%; }
+body { margin: 0; font-family: Poppins, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; }
