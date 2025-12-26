@@ -1,0 +1,1 @@
+// Moved to src/frontend/services/data.service.ts
