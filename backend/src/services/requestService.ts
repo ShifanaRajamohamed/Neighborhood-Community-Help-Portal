@@ -222,6 +222,13 @@ export class RequestService {
       throw new AppError('Only the request creator can perform this action', 403);
     }
 
+    // For helpers updating to in_progress or completed, verify they are the assigned helper
+    if (userRole === UserRole.HELPER &&
+      (updateData.status === 'in_progress' || updateData.status === 'In-progress' || updateData.status === 'completed') &&
+      request.helper_id !== userId) {
+      throw new AppError('Only the assigned helper can perform this action', 403);
+    }
+
     if (userRole === UserRole.HELPER && updateData.status === RequestStatus.ACCEPTED && !updateData.helper_id) {
       updateData.helper_id = userId;
     }

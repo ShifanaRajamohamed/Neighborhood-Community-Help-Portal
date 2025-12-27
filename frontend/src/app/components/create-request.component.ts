@@ -96,11 +96,12 @@ import { DataService } from '../services/data.service';
 
             <!-- Urgent Toggle -->
             <div class="flex items-center gap-4 p-4 rounded-2xl border border-dashed border-slate-200 bg-slate-50/50">
-               <div class="relative flex items-center">
-                  <input type="checkbox" id="isUrgent" formControlName="isUrgent" class="peer sr-only">
-                  <div class="w-11 h-6 bg-slate-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-rose-500"></div>
-                  <label for="isUrgent" class="ml-3 text-sm font-bold text-slate-700 cursor-pointer">Mark as Urgent</label>
-               </div>
+               <label for="isUrgent" class="relative inline-flex items-center cursor-pointer">
+                  <input type="checkbox" id="isUrgent" formControlName="isUrgent" class="sr-only peer" />
+                  <div class="w-11 h-6 bg-slate-300 rounded-full peer peer-checked:bg-rose-500 peer-focus:ring-2 peer-focus:ring-rose-300 transition-colors"></div>
+                  <div class="absolute left-[2px] top-[2px] bg-white border border-gray-300 rounded-full h-5 w-5 transition-transform peer-checked:translate-x-5"></div>
+                  <span class="ml-3 text-sm font-bold text-slate-700 select-none">Mark as Urgent</span>
+               </label>
             </div>
 
             <div class="flex items-center gap-4 pt-6">
@@ -122,36 +123,36 @@ export class CreateRequestComponent {
   form = this.fb.group({
     title: ['', Validators.required],
     fullAddress: ['', Validators.required],
-    
+
     category: ['General', Validators.required],
     complexity: ['Low' as 'Low' | 'Medium' | 'High', Validators.required],
     duration: ['', Validators.required],
     preferredTime: ['', Validators.required],
-    
+
     description: ['', Validators.required],
     isUrgent: [false]
   });
 
   constructor() {
-      const user = this.dataService.currentUser();
-      if (user?.role !== 'requester') {
-          this.router.navigate(['/dashboard']);
-      }
-      
-      // Auto-fill address from profile
-      if (user) {
-        this.form.patchValue({ fullAddress: user.fullAddress });
-      }
+    const user = this.dataService.currentUser();
+    if (user?.role !== 'requester') {
+      this.router.navigate(['/dashboard']);
+    }
+
+    // Auto-fill address from profile
+    if (user) {
+      this.form.patchValue({ fullAddress: user.fullAddress });
+    }
   }
 
   onSubmit() {
     if (this.form.valid) {
       const val = this.form.value;
       this.dataService.createRequest(
-        val.title!, 
-        val.description!, 
-        val.category!, 
-        !!val.isUrgent, 
+        val.title!,
+        val.description!,
+        val.category!,
+        !!val.isUrgent,
         val.fullAddress!,
         val.complexity!,
         val.duration!,

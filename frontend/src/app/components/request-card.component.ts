@@ -40,8 +40,34 @@ import { DataService } from '../services/data.service';
         <!-- Address Info with Privacy -->
         <div class="mb-5 flex items-center gap-1.5 text-amber-600/70 p-2 rounded-xl bg-amber-50/50 border border-amber-100/50">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4 flex-shrink-0"><path fill-rule="evenodd" d="M9.69 18.933l.003.001C9.89 19.02 10 19 10 19s.11.02.308-.066l.002-.001.006-.003.018-.008a5.741 5.741 0 00.281-.14c.186-.096.446-.24.757-.433.62-.384 1.445-.966 2.274-1.765C15.302 14.988 17 12.493 17 9A7 7 0 103 9c0 3.492 1.698 5.988 3.355 7.584a13.731 13.731 0 002.273 1.765 11.842 11.842 0 00.976.544l.062.029.018.008.006.003zM10 11.25a2.25 2.25 0 100-4.5 2.25 2.25 0 000 4.5z" clip-rule="evenodd" /></svg>
-          <span class="text-[10px] font-bold truncate max-w-full">{{ canShowFullAddress() ? request().fullAddress : request().abstractAddress }}</span>
+          <span class="text-[10px] font-bold truncate max-w-full">
+            {{ canShowFullAddress() ? (request().fullAddress || request().abstractAddress || 'No location') : (request().abstractAddress || 'Area not specified') }}
+          </span>
         </div>
+
+        <!-- Additional Info -->
+        @if (request().complexity || request().estimatedDuration || request().preferredTime) {
+          <div class="mb-3 space-y-1.5">
+            @if (request().complexity) {
+              <div class="flex items-center gap-2 text-xs">
+                <span class="text-slate-400">Complexity:</span>
+                <span class="font-semibold text-slate-700">{{ request().complexity }}</span>
+              </div>
+            }
+            @if (request().estimatedDuration) {
+              <div class="flex items-center gap-2 text-xs">
+                <span class="text-slate-400">Duration:</span>
+                <span class="font-semibold text-slate-700">{{ request().estimatedDuration }}</span>
+              </div>
+            }
+            @if (request().preferredTime) {
+              <div class="flex items-center gap-2 text-xs">
+                <span class="text-slate-400">Preferred:</span>
+                <span class="font-semibold text-slate-700">{{ request().preferredTime }}</span>
+              </div>
+            }
+          </div>
+        }
 
         <div class="mt-auto pt-3 border-t border-slate-50">
           <!-- Requester's View for Offers -->

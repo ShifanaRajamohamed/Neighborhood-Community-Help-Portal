@@ -178,24 +178,21 @@ export class DataService {
     // Simple logic to derive abstract address
     const abstractAddress = fullAddress.split(',').pop()?.trim() || 'Unknown Area';
 
-    const newReq: Omit<HelpRequest, 'id' | 'created_at'> = {
+    const newReq = {
       resident_id: user.id,
-      requesterId: user.id,
-      requesterName: user.name,
-      helper_id: null,
-      helperName: '',
+      requester_id: user.id,
+      requester_name: user.name,
       title,
       description,
       category,
       status: 'pending',
-      isUrgent,
-      createdAt: new Date(),
-      fullAddress: fullAddress,
-      abstractAddress: abstractAddress,
-      offers: [],
+      full_address: fullAddress,
+      abstract_address: abstractAddress,
+      is_urgent: isUrgent,
       complexity: complexity,
-      estimatedDuration: duration,
-      preferredTime: preferredTime,
+      estimated_duration: duration,
+      preferred_time: preferredTime,
+      offers: [],
       timeline: [{ status: 'pending', timestamp: new Date(), note: 'Request Created' }]
     };
 
@@ -209,30 +206,35 @@ export class DataService {
 
   async updateRequestStatus(requestId: number, status: RequestStatus): Promise<void> {
     const user = this._currentUser();
-    if (!user) return;
+    if (!user) {
+      console.log('No user logged in');
+      return;
+    }
 
     const req = this._requests().find(r => r.id === requestId);
-    if (!req) return;
+    if (!req) {
+      console.log('Request not found:', requestId);
+      return;
+    }
 
-    let updates: Partial<HelpRequest> = {};
+    console.log('Updating request status:', { requestId, status, userId: user.id, helper_id: req.helper_id, helperId: req.helperId });
+
     const newTimelineEvent = { status: status, timestamp: new Date() };
     const updatedTimeline = [...(req.timeline || []), newTimelineEvent];
 
-    if (status === 'accepted' && user.role === 'helper') {
-      // This flow is now handled by acceptOffer
-    } else if ((status === 'in_progress' || status === 'In-progress') && req.helper_id === user.id) {
-      updates = { status: 'in_progress', timeline: updatedTimeline };
-    } else if (status === 'completed' && req.helper_id === user.id) {
-      updates = { status: 'completed', timeline: updatedTimeline };
-    }
+    const updates = {
+      status: status,
+      timeline: updatedTimeline
+    };
 
-    if (Object.keys(updates).length > 0) {
-      try {
-        await firstValueFrom(this.http.put(`${this.apiUrl}/requests/${requestId}/status`, updates));
-        await this.loadData(); // Refresh data after update
-      } catch (error) {
-        throw error;
-      }
+    console.log('Sending updates:', updates);
+
+    try {
+      await firstValueFrom(this.http.put(`${this.apiUrl}/requests/${requestId}/status`, updates));
+      await this.loadData(); // Refresh data after update
+    } catch (error) {
+      console.error('Failed to update status:', error);
+      throw error;
     }
   }
 
