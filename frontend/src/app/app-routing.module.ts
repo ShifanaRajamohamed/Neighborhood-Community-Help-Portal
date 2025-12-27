@@ -9,7 +9,7 @@ import { DashboardComponent } from './components/dashboard.component';
 import { CreateRequestComponent } from './components/create-request.component';
 import { LandingComponent } from './components/landing.component';
 
-const routes: Routes = [
+export const routes: Routes = [
   { path: '', component: LandingComponent },
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },

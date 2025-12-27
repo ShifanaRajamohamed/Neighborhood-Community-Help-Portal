@@ -6,11 +6,11 @@ import { DataService } from '../services/data.service';
   providedIn: 'root'
 })
 export class ResidentGuard implements CanActivate {
-  constructor(private dataService: DataService, private router: Router) {}
+  constructor(private dataService: DataService, private router: Router) { }
 
   canActivate(): boolean {
     const user = this.dataService.currentUser();
-    if (user && user.role === 'Resident') {
+    if (user && (user.role === 'resident' || user.role === 'requester')) {
       return true;
     }
     this.router.navigate(['/dashboard']);

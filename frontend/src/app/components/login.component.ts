@@ -1,7 +1,7 @@
 import { Component, inject, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
-import { DataService } from '../../services/data.service';
+import { DataService } from '../services/data.service';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -106,14 +106,25 @@ export class LoginComponent {
   });
 
   async onSubmit() {
+    console.log('Login form submitted', this.loginForm.value);
     if (this.loginForm.valid) {
-      const { email, password } = this.loginForm.value as { email: string; password: string };
-      const success = await this.dataService.login(email, password);
-      if (success) {
-        this.router.navigate(['/dashboard']);
-      } else {
-        this.error.set('Invalid email or password');
+      try {
+        this.error.set('');
+        const { email, password } = this.loginForm.value as { email: string; password: string };
+        console.log('Attempting login with:', email);
+        const success = await this.dataService.login(email, password);
+        console.log('Login result:', success);
+        if (success) {
+          this.router.navigate(['/dashboard']);
+        } else {
+          this.error.set('Invalid email or password');
+        }
+      } catch (err) {
+        console.error('Login error:', err);
+        this.error.set('Login failed. Please try again.');
       }
+    } else {
+      console.log('Form is invalid', this.loginForm.errors);
     }
   }
 

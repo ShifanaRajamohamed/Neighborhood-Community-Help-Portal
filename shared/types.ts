@@ -1,4 +1,4 @@
-export type UserRole = 'Resident' | 'Helper' | 'requester' | 'helper' | 'admin';
+export type UserRole = 'resident' | 'helper' | 'requester' | 'admin';
 
 export interface User {
   id: number;
@@ -12,6 +12,8 @@ export interface User {
   email?: string;
   requesterId?: number;
   requesterName?: string;
+  fullAddress?: string;
+  abstractAddress?: string;
 }
 
 export type RequestStatus = 'Pending' | 'Accepted' | 'In-progress' | 'Completed' | 'pending' | 'accepted' | 'in_progress' | 'completed' | 'offered';
@@ -32,6 +34,7 @@ export interface HelpRequest {
   id: number;
   resident_id?: number;
   helper_id: number | null;
+  helperId?: number | null;
   title: string;
   description: string;
   category: string;

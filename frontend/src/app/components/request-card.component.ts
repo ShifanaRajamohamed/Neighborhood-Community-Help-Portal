@@ -1,12 +1,12 @@
 import { Component, input, inject, signal, computed } from '@angular/core';
-import { DatePipe, TitleCasePipe, CommonModule } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { HelpRequest, RequestStatus, User } from '../../shared/types';
 import { DataService } from '../services/data.service';
 
 @Component({
   selector: 'app-request-card',
   standalone: true,
-  imports: [DatePipe, TitleCasePipe, CommonModule],
+  imports: [CommonModule],
   template: `
     <div class="group relative flex flex-col w-full bg-white rounded-[1.5rem] overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-xl shadow-md border border-slate-100 h-full">
       <div class="relative h-40 w-full overflow-hidden bg-hive-yellow-50">
@@ -72,8 +72,8 @@ import { DataService } from '../services/data.service';
             </div>
             
             @if (getActionLabel()) {
-              <button (click)="handlePrimaryAction()" [disabled]="isProcessing() || hasOffered()" 
-                      [class]="'px-4 py-2 rounded-full text-white text-[10px] font-bold uppercase tracking-widest transition-colors shadow-md active:scale-95 disabled:opacity-50 ' + getActionClass()">
+              <button (click)="handlePrimaryAction()" [disabled]="isProcessing() || (request().status === 'pending' && hasOffered())" 
+                      [class]="'px-4 py-2 rounded-full text-white text-[10px] font-bold uppercase tracking-widest transition-colors shadow-md active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer ' + getActionClass()">
                   {{ getActionLabel() }}
               </button>
             } @else {
@@ -116,10 +116,10 @@ export class RequestCardComponent {
 
   categoryImage = computed(() => {
     const category = this.request().category.toLowerCase();
-    const width = 600, height = 400; 
+    const width = 600, height = 400;
     switch (category) {
       case 'plumbing': return `https://images.unsplash.com/photo-1600150928925-999331b25575?auto=format&fit=crop&w=${width}&q=80`;
-      case 'electrical': return `https://images.unsplash.com/photo-1616440334541-6e3e5c9b6348?auto=format&fit=crop&w=${width}&q=80`; 
+      case 'electrical': return `https://images.unsplash.com/photo-1616440334541-6e3e5c9b6348?auto=format&fit=crop&w=${width}&q=80`;
       case 'grocery': return `https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=${width}&q=80`;
       case 'moving': return `https://images.unsplash.com/photo-1594411332204-f6d3f242b32f?auto=format&fit=crop&w=${width}&q=80`;
       case 'tutoring': return `https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?auto=format&fit=crop&w=${width}&q=80`;
@@ -133,9 +133,9 @@ export class RequestCardComponent {
   canShowFullAddress = computed(() => {
     const user = this.currentUser();
     if (!user) return false;
-    return user.role === 'admin' || 
-           this.request().requesterId === user.id || 
-           this.request().helperId === user.id;
+    return user.role === 'admin' ||
+      this.request().requesterId === user.id ||
+      this.request().helperId === user.id;
   });
 
   isRequesterOwner = computed(() => this.currentUser()?.id === this.request().requesterId);
@@ -167,49 +167,72 @@ export class RequestCardComponent {
   }
 
   handlePrimaryAction() {
+    console.log('handlePrimaryAction called');
     const user = this.currentUser();
+    console.log('Current user:', user);
     if (!user) return;
     const status = this.request().status;
+    console.log('Request status:', status);
 
-    if (user.role === 'admin') this.showConfirmModal.set(true);
+    if (user.role === 'admin') {
+      console.log('Admin delete action');
+      this.showConfirmModal.set(true);
+    }
     if (user.role === 'helper') {
-      if (status === 'pending') this.makeOffer();
-      if (status === 'accepted') this.setStatus('in_progress');
-      if (status === 'in_progress') this.setStatus('completed');
+      console.log('Helper action for status:', status);
+      if (status === 'pending') {
+        console.log('Making offer');
+        this.makeOffer();
+      }
+      if (status === 'accepted') {
+        console.log('Starting task');
+        this.setStatus('in_progress');
+      }
+      if (status === 'in_progress') {
+        console.log('Completing task');
+        this.setStatus('completed');
+      }
     }
   }
-  
-  performWithFeedback(message: string, actionFn: () => void) {
+
+  async performWithFeedback(message: string, actionFn: () => Promise<void>) {
     this.isProcessing.set(true);
-    actionFn();
-    setTimeout(() => { // Simulate API call latency
-        this.feedback.set(message);
-        setTimeout(() => {
-          this.feedback.set(null);
-          this.isProcessing.set(false);
-        }, 800);
-    }, 300);
+    try {
+      await actionFn();
+      this.feedback.set(message);
+      setTimeout(() => {
+        this.feedback.set(null);
+        this.isProcessing.set(false);
+      }, 800);
+    } catch (error) {
+      console.error('Action failed:', error);
+      this.feedback.set('Action failed');
+      setTimeout(() => {
+        this.feedback.set(null);
+        this.isProcessing.set(false);
+      }, 1500);
+    }
   }
 
-  makeOffer() { this.performWithFeedback('Offer Sent!', () => this.dataService.makeOffer(this.request().id)); }
-  acceptOffer(helperId: number) { this.performWithFeedback('Helper Accepted!', () => this.dataService.acceptOffer(this.request().id, helperId)); }
+  makeOffer() { this.performWithFeedback('Offer Sent!', async () => await this.dataService.makeOffer(this.request().id)); }
+  acceptOffer(helperId: number) { this.performWithFeedback('Helper Accepted!', async () => await this.dataService.acceptOffer(this.request().id, helperId)); }
   setStatus(status: RequestStatus) {
     const msg = status === 'in_progress' ? 'Started!' : 'Done!';
-    this.performWithFeedback(msg, () => this.dataService.updateRequestStatus(this.request().id, status));
+    this.performWithFeedback(msg, async () => await this.dataService.updateRequestStatus(this.request().id, status));
   }
 
   cancelDelete() { this.showConfirmModal.set(false); }
   delete() { this.showConfirmModal.set(false); this.dataService.deleteRequest(this.request().id); }
 
   getStatusBadgeClass(status: string) {
-     const base = 'px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border ';
-     switch(status) {
-       case 'pending': return base + 'bg-amber-50 text-amber-600 border-amber-200';
-       case 'offered': return base + 'bg-cyan-50 text-cyan-600 border-cyan-200';
-       case 'accepted': return base + 'bg-blue-50 text-blue-600 border-blue-200';
-       case 'in_progress': return base + 'bg-purple-50 text-purple-600 border-purple-200';
-       case 'completed': return base + 'bg-emerald-50 text-emerald-600 border-emerald-200';
-       default: return base + 'bg-slate-50 text-slate-500 border-slate-200';
-     }
+    const base = 'px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border ';
+    switch (status) {
+      case 'pending': return base + 'bg-amber-50 text-amber-600 border-amber-200';
+      case 'offered': return base + 'bg-cyan-50 text-cyan-600 border-cyan-200';
+      case 'accepted': return base + 'bg-blue-50 text-blue-600 border-blue-200';
+      case 'in_progress': return base + 'bg-purple-50 text-purple-600 border-purple-200';
+      case 'completed': return base + 'bg-emerald-50 text-emerald-600 border-emerald-200';
+      default: return base + 'bg-slate-50 text-slate-500 border-slate-200';
+    }
   }
 }

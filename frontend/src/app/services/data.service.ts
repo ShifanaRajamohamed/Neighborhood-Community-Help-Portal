@@ -15,6 +15,11 @@ export class DataService {
   private _currentUser = signal<User | null>(null);
   readonly currentUser = this._currentUser.asReadonly();
 
+  constructor() {
+    // Restore session from localStorage on app initialization
+    this.restoreSession();
+  }
+
   // Data from Backend (will be cached locally)
   private _requests = signal<HelpRequest[]>([]);
   private _users = signal<User[]>([]);
@@ -27,10 +32,10 @@ export class DataService {
     const user = this._currentUser();
     const allRequests = this._requests();
     if (!user) return [];
-    if (user.role === 'Resident' || user.role === 'requester') {
+    if (user.role === 'resident' || user.role === 'requester') {
       return allRequests.filter(r => r.requesterId === user.id);
     }
-    if (user.role === 'Helper' || user.role === 'helper') {
+    if (user.role === 'helper') {
       return allRequests.filter(r => r.helper_id === user.id);
     }
     return [];
@@ -45,21 +50,21 @@ export class DataService {
   readonly helperAcceptedRequests = computed(() => {
     const user = this._currentUser();
     const reqs = this._requests();
-    if (user?.role !== 'Helper' && user?.role !== 'helper') return [];
+    if (user?.role !== 'helper') return [];
     return reqs.filter(r => r.helper_id === user.id && r.status === 'accepted');
   });
 
   readonly helperInProgressRequests = computed(() => {
     const user = this._currentUser();
     const reqs = this._requests();
-    if (user?.role !== 'Helper' && user?.role !== 'helper') return [];
+    if (user?.role !== 'helper') return [];
     return reqs.filter(r => r.helper_id === user.id && (r.status === 'in_progress' || r.status === 'In-progress'));
   });
 
   readonly helperCompletedRequests = computed(() => {
     const user = this._currentUser();
     const reqs = this._requests();
-    if (user?.role !== 'Helper' && user?.role !== 'helper') return [];
+    if (user?.role !== 'helper') return [];
     return reqs.filter(r => r.helper_id === user.id && r.status === 'completed');
   });
 
@@ -80,15 +85,35 @@ export class DataService {
     };
   });
 
+  // Restore session from localStorage
+  private async restoreSession() {
+    const token = localStorage.getItem('token');
+    const userStr = localStorage.getItem('user');
+
+    if (token && userStr) {
+      try {
+        const user = JSON.parse(userStr);
+        this._currentUser.set(user);
+        // Load fresh data from backend
+        await this.loadData();
+      } catch (error) {
+        console.error('Failed to restore session:', error);
+        // Clear invalid data
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+      }
+    }
+  }
+
   // Load data from backend
   async loadData() {
     try {
-      const [requests, users] = await Promise.all([
-        firstValueFrom(this.http.get<HelpRequest[]>(`${this.apiUrl}/requests`)),
-        firstValueFrom(this.http.get<User[]>(`${this.apiUrl}/users`))
+      const [requestsResponse, usersResponse] = await Promise.all([
+        firstValueFrom(this.http.get<{ success: boolean, data: HelpRequest[] }>(`${this.apiUrl}/requests`)),
+        firstValueFrom(this.http.get<{ success: boolean, data: User[] }>(`${this.apiUrl}/users`))
       ]);
-      this._requests.set(requests);
-      this._users.set(users);
+      this._requests.set(requestsResponse.data || []);
+      this._users.set(usersResponse.data || []);
     } catch (error) {
       console.error('Failed to load data:', error);
     }
@@ -97,42 +122,55 @@ export class DataService {
   // Actions
   async login(contactInfo: string, password: string): Promise<boolean> {
     try {
-      const user = await firstValueFrom(
-        this.http.post<User>(`${this.apiUrl}/users/login`, { contact_info: contactInfo, password })
+      const response = await firstValueFrom(
+        this.http.post<{ success: boolean, data: { user: User, token: string } }>(`${this.apiUrl}/users/login`, { contact_info: contactInfo, password })
       );
-      this._currentUser.set(user);
-      await this.loadData(); // Refresh data after login
-      return true;
+      if (response.success && response.data) {
+        localStorage.setItem('token', response.data.token);
+        localStorage.setItem('user', JSON.stringify(response.data.user));
+        this._currentUser.set(response.data.user);
+        await this.loadData(); // Refresh data after login
+        return true;
+      }
+      return false;
     } catch (error) {
       return false;
     }
   }
 
   logout() {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
     this._currentUser.set(null);
+    this._requests.set([]);
+    this._users.set([]);
   }
 
-  async register(user: Omit<User, 'id'>): Promise<void> {
+  async register(user: any): Promise<void> {
     try {
-      const newUser = await firstValueFrom(
-        this.http.post<User>(`${this.apiUrl}/users/register`, user)
+      const response = await firstValueFrom(
+        this.http.post<{ success: boolean, data: { user: User, token: string } }>(`${this.apiUrl}/users/register`, user)
       );
-      this._currentUser.set(newUser);
-      await this.loadData(); // Refresh data after registration
+      if (response.success && response.data) {
+        localStorage.setItem('token', response.data.token);
+        localStorage.setItem('user', JSON.stringify(response.data.user));
+        this._currentUser.set(response.data.user);
+        await this.loadData(); // Refresh data after registration
+      }
     } catch (error) {
       throw error;
     }
   }
 
   async createRequest(
-      title: string,
-      description: string,
-      category: string,
-      isUrgent: boolean,
-      fullAddress: string,
-      complexity: 'Low' | 'Medium' | 'High',
-      duration: string,
-      preferredTime: string
+    title: string,
+    description: string,
+    category: string,
+    isUrgent: boolean,
+    fullAddress: string,
+    complexity: 'Low' | 'Medium' | 'High',
+    duration: string,
+    preferredTime: string
   ): Promise<void> {
     const user = this._currentUser();
     if (!user || user.role !== 'requester') return;
@@ -180,17 +218,17 @@ export class DataService {
     const newTimelineEvent = { status: status, timestamp: new Date() };
     const updatedTimeline = [...(req.timeline || []), newTimelineEvent];
 
-    if (status === 'accepted' && (user.role === 'Helper' || user.role === 'helper')) {
-       // This flow is now handled by acceptOffer
+    if (status === 'accepted' && user.role === 'helper') {
+      // This flow is now handled by acceptOffer
     } else if ((status === 'in_progress' || status === 'In-progress') && req.helper_id === user.id) {
-       updates = { status: 'in_progress', timeline: updatedTimeline };
+      updates = { status: 'in_progress', timeline: updatedTimeline };
     } else if (status === 'completed' && req.helper_id === user.id) {
-       updates = { status: 'completed', timeline: updatedTimeline };
+      updates = { status: 'completed', timeline: updatedTimeline };
     }
 
     if (Object.keys(updates).length > 0) {
       try {
-        await firstValueFrom(this.http.put(`${this.apiUrl}/requests/${requestId}`, updates));
+        await firstValueFrom(this.http.put(`${this.apiUrl}/requests/${requestId}/status`, updates));
         await this.loadData(); // Refresh data after update
       } catch (error) {
         throw error;

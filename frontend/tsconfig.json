@@ -3,7 +3,7 @@
     "target": "ES2022",
     "experimentalDecorators": true,
     "useDefineForClassFields": false,
-    "module": "ESNext",
+    "module": "ES2022",
     "lib": [
       "ES2022",
       "DOM",
@@ -14,18 +14,15 @@
       "node"
     ],
     "moduleResolution": "bundler",
-    "isolatedModules": true,
-    "moduleDetection": "force",
-    "allowJs": true,
-    "jsx": "react-jsx",
-    "paths": {
-      "@/*": [
-        "./*"
-      ]
-    }
+    "strict": false,
+    "resolveJsonModule": true,
+    "esModuleInterop": true
   },
   "files": [
-    "./index.tsx"
+    "src/main.ts"
+  ],
+  "include": [
+    "src/**/*.ts"
   ],
   "angularCompilerOptions": {
     "disableTypeScriptVersionCheck": true

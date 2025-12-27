@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { DataService } from '../services/data.service';
@@ -19,6 +19,12 @@ import { UserRole } from '../../shared/types';
 
          <h2 class="font-serif text-4xl text-hive-dark mb-2 leading-tight">Join the Hive.</h2>
          <p class="text-slate-500 mb-8 font-light">Create an account to connect with neighbors.</p>
+
+          @if (error()) {
+            <div class="p-4 rounded-2xl bg-rose-50 text-rose-500 text-sm font-medium mb-4">
+              {{ error() }}
+            </div>
+          }
 
           <form [formGroup]="form" (ngSubmit)="onSubmit()" class="space-y-5 max-w-sm">
             
@@ -78,6 +84,8 @@ export class RegisterComponent {
   private dataService = inject(DataService);
   private router: Router = inject(Router);
 
+  error = signal<string>('');
+
   form = this.fb.group({
     name: ['', Validators.required],
     email: ['', [Validators.required, Validators.email]],
@@ -86,22 +94,32 @@ export class RegisterComponent {
     password: ['', [Validators.required, Validators.minLength(6)]]
   });
 
-  onSubmit() {
+  async onSubmit() {
     if (this.form.valid) {
-      const val = this.form.value;
-      const isHelper = val.role === 'helper';
-      const abstractAddress = val.fullAddress!.split(',').pop()?.trim() || 'Unknown Area';
+      try {
+        this.error.set('');
+        const val = this.form.value;
+        const isHelper = val.role === 'helper';
+        const abstractAddress = val.fullAddress!.split(',').pop()?.trim() || 'Unknown Area';
 
-      this.dataService.register({
-        name: val.name!,
-        email: val.email!,
-        fullAddress: val.fullAddress!,
-        abstractAddress: abstractAddress,
-        role: val.role!,
-        password: val.password!,
-        isApproved: !isHelper // Requesters are approved by default, helpers are not.
-      });
-      this.router.navigate(['/dashboard']);
+        await this.dataService.register({
+          name: val.name!,
+          email: val.email!,
+          contact_info: val.email!,
+          location: abstractAddress,
+          full_address: val.fullAddress!,
+          abstract_address: abstractAddress,
+          role: val.role!,
+          password: val.password!
+        } as any);
+        this.router.navigate(['/dashboard']);
+      } catch (err: any) {
+        if (err.status === 409) {
+          this.error.set('This email is already registered. Please login instead.');
+        } else {
+          this.error.set('Registration failed. Please try again.');
+        }
+      }
     }
   }
 }

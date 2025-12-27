@@ -6,11 +6,11 @@ import { DataService } from '../services/data.service';
   providedIn: 'root'
 })
 export class HelperGuard implements CanActivate {
-  constructor(private dataService: DataService, private router: Router) {}
+  constructor(private dataService: DataService, private router: Router) { }
 
   canActivate(): boolean {
     const user = this.dataService.currentUser();
-    if (user && user.role === 'Helper') {
+    if (user && user.role === 'helper') {
       return true;
     }
     this.router.navigate(['/dashboard']);
