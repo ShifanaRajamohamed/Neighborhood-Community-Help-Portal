@@ -1,6 +1,6 @@
 # Help Hive - Neighborhood Community Help Portal
 
-A full-stack web application connecting neighbors who need help with those willing to provide assistance. Built with Angular, Node.js, Express, TypeScript, and MySQL.
+A full-stack web application connecting neighbors who need help with those willing to provide assistance. Built with Angular 18, Node.js, GraphQL, BetterAuth, Zod, TypeScript, and MySQL.
 
 ## 🌟 Features
 
@@ -36,29 +36,31 @@ A full-stack web application connecting neighbors who need help with those willi
 - **User Management** capabilities
 
 ### General Features
-- **JWT Authentication** with secure token storage
+- **BetterAuth Authentication** with secure session management
 - **Session Persistence** - stay logged in across page refreshes
 - **Role-Based Access Control** (Requester, Helper, Admin)
-- **Real-time Updates** after actions
-- **Responsive Design** with Tailwind CSS
+- **GraphQL API** - Single, efficient API interface
+- **Zod Validation** - Type-safe input validation
+- **Responsive Design** with Bootstrap 5
 - **Privacy Controls** - show full address only to involved parties
 
 ## 🛠️ Tech Stack
 
 ### Frontend
-- **Angular 19** - Modern web framework with standalone components
+- **Angular 18** - Modern web framework with standalone components
 - **TypeScript** - Type-safe development
-- **Tailwind CSS** - Utility-first styling
+- **Bootstrap 5** - Responsive CSS framework
 - **RxJS** - Reactive programming
 - **Signals** - State management
 
 ### Backend
 - **Node.js** - Runtime environment
-- **Express** - Web framework
+- **GraphQL** - API query language
+- **Apollo Server Express** - GraphQL server
+- **BetterAuth** - Modern authentication library
+- **Zod** - TypeScript-first schema validation
 - **TypeScript** - Type-safe backend
 - **MySQL2** - Database driver
-- **JWT (jsonwebtoken)** - Authentication
-- **bcrypt** - Password hashing
 - **ts-node** - TypeScript execution
 
 ### Database
@@ -201,61 +203,64 @@ Frontend runs on http://localhost:4200
 ## 📁 Project Structure
 
 ```
-capstone/
+neighborhood-community-help-portal/
 ├── backend/
 │   ├── src/
-│   │   ├── config/
-│   │   │   └── database.ts          # MySQL connection
-│   │   ├── controllers/
-│   │   │   ├── adminController.ts   # Admin endpoints
-│   │   │   ├── requestController.ts # Request CRUD
-│   │   │   └── userController.ts    # Auth & users
-│   │   ├── middleware/
-│   │   │   ├── auth.ts              # JWT verification
-│   │   │   ├── errorHandler.ts      # Error handling
-│   │   │   └── validation.ts        # Input validation
-│   │   ├── routes/
-│   │   │   ├── adminRoutes.ts
-│   │   │   ├── requestRoutes.ts
-│   │   │   └── userRoutes.ts
-│   │   ├── services/
-│   │   │   ├── adminService.ts      # Admin business logic
-│   │   │   ├── requestService.ts    # Request business logic
-│   │   │   └── userService.ts       # User business logic
-│   │   ├── types/
-│   │   │   └── index.ts             # TypeScript types
-│   │   └── index.ts                 # Entry point
+│   │   ├── graphql/
+│   │   │   ├── schema.ts             # GraphQL type definitions
+│   │   │   ├── resolvers.ts          # GraphQL resolvers
+│   │   │   └── index.ts              # GraphQL setup
+│   │   ├── zod/
+│   │   │   ├── userSchemas.ts        # User validation schemas
+│   │   │   ├── requestSchemas.ts     # Request validation schemas
+│   │   │   └── index.ts              # Zod exports
+│   │   ├── betterAuth/
+│   │   │   ├── config.ts             # BetterAuth configuration
+│   │   │   └── index.ts              # BetterAuth exports
+│   │   ├── modules/
+│   │   │   ├── userModule.ts         # User business logic
+│   │   │   ├── requestModule.ts      # Request business logic
+│   │   │   └── index.ts              # Module exports
+│   │   ├── database/
+│   │   │   └── index.ts              # Database connection
+│   │   ├── utils/
+│   │   │   └── index.ts              # Utility functions
+│   │   └── index.ts                  # Entry point
 │   ├── database/
-│   │   └── schema.sql               # Database schema
-│   ├── .env                         # Environment variables
+│   │   └── schema.sql                # Database schema
+│   ├── .env                          # Environment variables
 │   ├── package.json
 │   └── tsconfig.json
 │
 ├── frontend/
-│   └── src/
-│       └── app/
-│           ├── components/
-│           │   ├── create-request.component.ts
-│           │   ├── dashboard.component.ts
-│           │   ├── landing.component.ts
-│           │   ├── login.component.ts
-│           │   ├── navbar.component.ts
-│           │   ├── register.component.ts
-│           │   └── request-card.component.ts
-│           ├── guards/
-│           │   ├── auth.guard.ts
-│           │   ├── helper.guard.ts
-│           │   └── requester.guard.ts
-│           ├── interceptors/
-│           │   └── auth.interceptor.ts     # JWT attachment
-│           ├── services/
-│           │   └── data.service.ts         # API & state
-│           ├── app-routing.module.ts
-│           ├── app.component.ts
-│           └── app.module.ts
+│   ├── src/
+│   │   ├── app/
+│   │   │   ├── core/
+│   │   │   │   ├── guards/           # Route guards
+│   │   │   │   └── interceptors/     # HTTP interceptors
+│   │   │   ├── shared/
+│   │   │   │   └── models/           # Shared models/types
+│   │   │   ├── modules/
+│   │   │   │   └── main/             # Main feature module
+│   │   │   │       └── components/   # Feature components
+│   │   │   ├── services/             # Application services
+│   │   │   ├── graphql/              # GraphQL client setup
+│   │   │   ├── auth/                 # Auth components/services
+│   │   │   ├── app-routing.module.ts
+│   │   │   ├── app.component.ts
+│   │   │   └── app.module.ts
+│   │   ├── styles.css                # Global styles
+│   │   ├── index.html                # Main HTML
+│   │   └── main.ts                   # Bootstrap
+│   ├── public/                       # Static assets
+│   ├── angular.json                  # Angular config
+│   ├── tsconfig.json                 # TypeScript config
+│   ├── tsconfig.app.json             # App TypeScript config
+│   ├── tsconfig.spec.json            # Test TypeScript config
+│   └── package.json
 │
 └── shared/
-    └── types.ts                     # Shared TypeScript types
+    └── types.ts                      # Shared TypeScript types
 ```
 
 ## 🗄️ Database Schema
@@ -300,30 +305,175 @@ capstone/
 - updated_at (TIMESTAMP)
 ```
 
-## 🔌 API Endpoints
+## 🔌 GraphQL API
 
-### Authentication
-- `POST /api/users/register` - Register new user
-- `POST /api/users/login` - Login user
+The backend provides a single GraphQL endpoint at `/graphql` with full type safety and validation.
 
-### Users
-- `GET /api/users` - Get all users (authenticated)
-- `PUT /api/users/approve/:id` - Approve helper (admin only)
+### Authentication Mutations
+```graphql
+mutation Register($input: CreateUserInput!) {
+  register(input: $input) {
+    success
+    data {
+      user {
+        id
+        name
+        contact_info
+        role
+        is_approved
+      }
+      token
+    }
+    message
+  }
+}
 
-### Requests
-- `GET /api/requests` - Get all requests (authenticated)
-- `POST /api/requests` - Create request (requester only)
-- `GET /api/requests/:id` - Get single request
-- `PUT /api/requests/:id/status` - Update request status
-- `PUT /api/requests/:id/offers` - Make offer (helper only)
-- `PUT /api/requests/:id/accept/:helperId` - Accept offer (requester only)
-- `DELETE /api/requests/:id` - Delete request (admin or owner)
+mutation Login($input: LoginInput!) {
+  login(input: $input) {
+    success
+    data {
+      user {
+        id
+        name
+        contact_info
+        role
+        is_approved
+      }
+      token
+    }
+    message
+  }
+}
+```
 
-### Admin
-- `GET /api/admin/requests` - Get all requests with filters
-- `GET /api/admin/requests/:id` - Get request details
-- `PUT /api/admin/requests/:id/status` - Update status (admin override)
-- `GET /api/admin/stats` - Get dashboard statistics
+### User Queries & Mutations
+```graphql
+query GetUsers {
+  users {
+    success
+    data {
+      id
+      name
+      contact_info
+      role
+      is_approved
+    }
+  }
+}
+
+query GetCurrentUser {
+  me {
+    success
+    data {
+      id
+      name
+      contact_info
+      role
+      is_approved
+    }
+  }
+}
+
+mutation ApproveHelper($id: ID!) {
+  approveHelper(id: $id) {
+    success
+    data {
+      id
+      name
+      is_approved
+    }
+    message
+  }
+}
+```
+
+### Request Queries & Mutations
+```graphql
+query GetRequests($status: RequestStatus, $category: String, $limit: Int, $offset: Int) {
+  requests(status: $status, category: $category, limit: $limit, offset: $offset) {
+    success
+    data {
+      id
+      title
+      description
+      category
+      status
+      is_urgent
+      complexity
+      offers {
+        helperId
+        helperName
+        offeredAt
+      }
+      timeline {
+        status
+        timestamp
+        note
+      }
+    }
+  }
+}
+
+query GetMyRequests {
+  myRequests {
+    success
+    data {
+      id
+      title
+      status
+      offers {
+        helperId
+        helperName
+      }
+    }
+  }
+}
+
+mutation CreateRequest($input: CreateRequestInput!) {
+  createRequest(input: $input) {
+    success
+    data {
+      id
+      title
+      status
+    }
+    message
+  }
+}
+
+mutation MakeOffer($requestId: ID!, $input: MakeOfferInput!) {
+  makeOffer(requestId: $requestId, input: $input) {
+    success
+    message
+  }
+}
+```
+
+### Statistics & Admin Queries
+```graphql
+query GetStats {
+  stats {
+    success
+    data {
+      total
+      pending
+      active
+      completed
+    }
+  }
+}
+
+query GetUnapprovedHelpers {
+  unapprovedHelpers {
+    success
+    data {
+      id
+      name
+      contact_info
+    }
+  }
+}
+```
 
 ## 🔐 Security Features
 
@@ -373,19 +523,35 @@ capstone/
 
 ## 📝 Development Notes
 
+### Architecture Overview
+
+#### Backend Architecture
+- **GraphQL**: Single API endpoint with type-safe queries and mutations
+- **BetterAuth**: Modern authentication with session management
+- **Zod**: Runtime type validation for all inputs
+- **Clean Architecture**: Separated concerns with dedicated folders for each responsibility
+
+#### Frontend Architecture
+- **Angular 18**: Modern framework with standalone components
+- **Bootstrap 5**: Responsive CSS framework
+- **Feature Modules**: Organized components by feature
+- **Signal-based State**: Reactive state management
+
 ### Code Conventions
 - **Backend**: snake_case for database fields, camelCase for TypeScript
 - **Frontend**: camelCase throughout
-- **Components**: Standalone Angular components
-- **State**: Signal-based reactive state management
-- **API**: REST with JSON responses wrapped in `{success, data, message}`
+- **GraphQL**: camelCase for field names, PascalCase for types
+- **Validation**: Zod schemas for all input validation
+- **Error Handling**: Structured error responses with proper HTTP codes
 
 ### Key Design Decisions
-1. **2-Table Schema**: Simplified structure with JSON for complex data
-2. **JWT in localStorage**: Simple authentication for MVP
-3. **Standalone Components**: Modern Angular approach
-4. **Signal State**: Better performance than traditional observables
-5. **Manual Approval**: Helpers vetted before participating
+1. **GraphQL over REST**: Single, efficient API with exact data fetching
+2. **BetterAuth**: Modern auth library replacing custom JWT implementation
+3. **Zod Validation**: Runtime type safety and input sanitization
+4. **Clean Separation**: Dedicated folders for GraphQL, Auth, Validation, and Business Logic
+5. **Bootstrap over Tailwind**: More maintainable CSS with utility classes
+6. **Angular 18**: LTS version with improved performance and features
+7. **Manual Approval**: Helpers vetted before participating for quality control
 
 ## 🚧 Future Enhancements
 
