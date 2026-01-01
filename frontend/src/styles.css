@@ -1,0 +1,68 @@
+/* Global styles for Help Hive */
+
+/* Custom color variables for Bootstrap */
+:root {
+  --hive-yellow: #FBBF24;
+  --hive-yellow-50: #FFFBEB;
+  --hive-yellow-100: #FEF3C7;
+  --hive-yellow-200: #FDE68A;
+  --hive-yellow-300: #FCD34D;
+  --hive-yellow-400: #FBBF24;
+  --hive-yellow-500: #F59E0B;
+  --hive-yellow-600: #D97706;
+  --hive-dark: #1F2937;
+  --hive-light: #F9FAFB;
+}
+
+/* Font family */
+body {
+  font-family: 'Poppins', sans-serif;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Playfair Display', serif;
+}
+
+/* Selection styling */
+::selection {
+  background-color: var(--hive-yellow-100);
+  color: var(--hive-yellow-600);
+}
+
+/* Custom Bootstrap utilities */
+.bg-hive-yellow {
+  background-color: var(--hive-yellow) !important;
+}
+
+.bg-hive-dark {
+  background-color: var(--hive-dark) !important;
+}
+
+.bg-hive-light {
+  background-color: var(--hive-light) !important;
+}
+
+.text-hive-yellow {
+  color: var(--hive-yellow) !important;
+}
+
+.text-hive-dark {
+  color: var(--hive-dark) !important;
+}
+
+.text-hive-light {
+  color: var(--hive-light) !important;
+}
+
+/* Button styles */
+.btn-hive {
+  background-color: var(--hive-yellow);
+  border-color: var(--hive-yellow);
+  color: var(--hive-dark);
+}
+
+.btn-hive:hover {
+  background-color: var(--hive-yellow-600);
+  border-color: var(--hive-yellow-600);
+  color: var(--hive-dark);
+}
