@@ -10,7 +10,7 @@ export class ResidentGuard implements CanActivate {
 
   canActivate(): boolean {
     const user = this.dataService.currentUser();
-    if (user && (user.role === 'resident' || user.role === 'requester')) {
+    if (user && user.role === 'requester') {
       return true;
     }
     this.router.navigate(['/dashboard']);

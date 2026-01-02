@@ -6,6 +6,7 @@ import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-login',
+  standalone: true,
   imports: [ReactiveFormsModule, RouterLink, CommonModule],
   template: `
     <div class="flex h-screen bg-white overflow-hidden">
@@ -56,7 +57,7 @@ import { CommonModule } from '@angular/common';
                   <div class="w-8 h-8 rounded-full bg-hive-yellow-100 flex items-center justify-center text-hive-yellow-600 font-bold text-xs group-hover:scale-110 transition-transform">R</div>
                   <div>
                      <p class="text-xs font-bold text-slate-700">Requester</p>
-                     <p class="text-[10px] text-slate-400">alice@test.com</p>
+                     <p class="text-[10px] text-slate-400">alice&#64;test.com</p>
                   </div>
                </button>
 
@@ -64,7 +65,7 @@ import { CommonModule } from '@angular/common';
                   <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold text-xs group-hover:scale-110 transition-transform">H</div>
                   <div>
                      <p class="text-xs font-bold text-slate-700">Helper</p>
-                     <p class="text-[10px] text-slate-400">bob@test.com</p>
+                     <p class="text-[10px] text-slate-400">bob&#64;test.com</p>
                   </div>
                </button>
 
@@ -72,7 +73,7 @@ import { CommonModule } from '@angular/common';
                   <div class="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center text-slate-700 font-bold text-xs group-hover:scale-110 transition-transform">A</div>
                   <div>
                      <p class="text-xs font-bold text-slate-700">Admin</p>
-                     <p class="text-[10px] text-slate-400">admin@test.com</p>
+                     <p class="text-[10px] text-slate-400">admin&#64;test.com</p>
                   </div>
                </button>
              </div>

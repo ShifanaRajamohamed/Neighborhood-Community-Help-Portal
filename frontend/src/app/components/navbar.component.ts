@@ -5,6 +5,7 @@ import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-navbar',
+  standalone: true,
   imports: [RouterLink, CommonModule],
   template: `
     <nav class="absolute top-0 left-0 w-full z-50 bg-transparent pt-6 px-6">

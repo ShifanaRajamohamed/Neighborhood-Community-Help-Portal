@@ -1,4 +1,4 @@
-export type UserRole = 'resident' | 'helper' | 'requester' | 'admin';
+export type UserRole = 'helper' | 'requester' | 'admin';
 
 export interface User {
   id: number;
@@ -32,7 +32,7 @@ export interface TimelineEvent {
 
 export interface HelpRequest {
   id: number;
-  resident_id?: number;
+  requester_id?: number;
   helper_id: number | null;
   helperId?: number | null;
   title: string;

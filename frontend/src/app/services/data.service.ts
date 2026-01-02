@@ -32,7 +32,7 @@ export class DataService {
     const user = this._currentUser();
     const allRequests = this._requests();
     if (!user) return [];
-    if (user.role === 'resident' || user.role === 'requester') {
+    if (user.role === 'requester') {
       return allRequests.filter(r => r.requesterId === user.id);
     }
     if (user.role === 'helper') {
@@ -179,7 +179,6 @@ export class DataService {
     const abstractAddress = fullAddress.split(',').pop()?.trim() || 'Unknown Area';
 
     const newReq = {
-      resident_id: user.id,
       requester_id: user.id,
       requester_name: user.name,
       title,
