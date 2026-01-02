@@ -13,7 +13,7 @@ export class UserService {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // Auto-approve requesters and admins, helpers need manual approval
-    const isApproved = role === UserRole.REQUESTER || role === UserRole.ADMIN || role === UserRole.RESIDENT;
+    const isApproved = role === UserRole.REQUESTER || role === UserRole.ADMIN;
 
     const query = `
       INSERT INTO Users (name, contact_info, email, location, full_address, abstract_address, role, password, is_approved)

@@ -21,7 +21,6 @@ function safeJsonParse(value: any): any[] {
 export class RequestService {
   async createRequest(requestData: CreateRequestDTO): Promise<HelpRequest> {
     const {
-      resident_id,
       requester_id,
       requester_name,
       title,
@@ -43,16 +42,15 @@ export class RequestService {
 
     const query = `
       INSERT INTO HelpRequests (
-        resident_id, requester_id, requester_name, title, description, category, status, attachments,
+        requester_id, requester_name, title, description, category, status, attachments,
         full_address, abstract_address, is_urgent, complexity, estimated_duration, preferred_time,
         offers, timeline
       )
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `;
 
     const [result] = await pool.execute<ResultSetHeader>(query, [
-      resident_id,
-      requester_id || resident_id,
+      requester_id,
       requester_name || '',
       title,
       description,
@@ -76,7 +74,7 @@ export class RequestService {
   async getRequestById(id: number): Promise<HelpRequest> {
     const query = `
       SELECT 
-        id, resident_id, requester_id, requester_name, helper_id, helper_name, 
+        id, requester_id, requester_name, helper_id, helper_name, 
         title, description, category, status, attachments, created_at,
         full_address, abstract_address, is_urgent, complexity, 
         estimated_duration, preferred_time, offers, timeline
@@ -109,7 +107,7 @@ export class RequestService {
 
   async getAllRequests(filters?: {
     status?: RequestStatus;
-    resident_id?: number;
+    requester_id?: number;
     helper_id?: number;
     limit?: number;
     offset?: number;
@@ -127,9 +125,9 @@ export class RequestService {
       countParams.push(filters.status);
     }
 
-    if (filters?.resident_id) {
-      countQuery += ' AND resident_id = ?';
-      countParams.push(filters.resident_id);
+    if (filters?.requester_id) {
+      countQuery += ' AND requester_id = ?';
+      countParams.push(filters.requester_id);
     }
 
     if (filters?.helper_id !== undefined) {
@@ -147,7 +145,7 @@ export class RequestService {
     // Get paginated results
     let query = `
       SELECT 
-        id, resident_id, requester_id, requester_name, helper_id, helper_name, 
+        id, requester_id, requester_name, helper_id, helper_name, 
         title, description, category, status, attachments, created_at,
         full_address, abstract_address, is_urgent, complexity, 
         estimated_duration, preferred_time, offers, timeline
@@ -161,9 +159,9 @@ export class RequestService {
       params.push(filters.status);
     }
 
-    if (filters?.resident_id) {
-      query += ' AND resident_id = ?';
-      params.push(filters.resident_id);
+    if (filters?.requester_id) {
+      query += ' AND requester_id = ?';
+      params.push(filters.requester_id);
     }
 
     if (filters?.helper_id !== undefined) {
@@ -218,7 +216,7 @@ export class RequestService {
     this.validateStatusTransition(request.status, updateData.status);
 
     // Role-based authorization for status updates
-    if (userRole === UserRole.RESIDENT && request.resident_id !== userId) {
+    if (userRole === UserRole.REQUESTER && request.requester_id !== userId) {
       throw new AppError('Only the request creator can perform this action', 403);
     }
 
@@ -340,7 +338,7 @@ export class RequestService {
     const request = await this.getRequestById(id);
 
     // Only the requester or admin can delete
-    if (userRole !== UserRole.ADMIN && request.resident_id !== userId) {
+    if (userRole !== UserRole.ADMIN && request.requester_id !== userId) {
       throw new AppError('Only the request creator or admin can delete this request', 403);
     }
 

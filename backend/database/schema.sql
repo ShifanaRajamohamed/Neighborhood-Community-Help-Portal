@@ -16,7 +16,7 @@ CREATE TABLE Users (
   location VARCHAR(255) NOT NULL,
   full_address VARCHAR(500) NULL,
   abstract_address VARCHAR(255) NULL,
-  role ENUM('resident', 'helper', 'admin', 'requester') NOT NULL DEFAULT 'resident',
+  role ENUM('helper', 'admin', 'requester') NOT NULL DEFAULT 'requester',
   password VARCHAR(255) NOT NULL,
   is_approved BOOLEAN DEFAULT FALSE,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -30,8 +30,7 @@ CREATE TABLE Users (
 -- ============================================
 CREATE TABLE HelpRequests (
   id INT AUTO_INCREMENT PRIMARY KEY,
-  resident_id INT NOT NULL,
-  requester_id INT NULL,
+  requester_id INT NOT NULL,
   requester_name VARCHAR(255) NULL,
   helper_id INT NULL,
   helper_name VARCHAR(255) NULL,
@@ -52,13 +51,12 @@ CREATE TABLE HelpRequests (
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   
   -- Foreign key constraints
-  CONSTRAINT fk_resident FOREIGN KEY (resident_id) 
+  CONSTRAINT fk_requester FOREIGN KEY (requester_id) 
     REFERENCES Users(id) ON DELETE CASCADE,
   CONSTRAINT fk_helper FOREIGN KEY (helper_id) 
     REFERENCES Users(id) ON DELETE SET NULL,
   
   -- Indexes for performance
-  INDEX idx_resident (resident_id),
   INDEX idx_requester (requester_id),
   INDEX idx_helper (helper_id),
   INDEX idx_status (status),
@@ -77,9 +75,9 @@ INSERT INTO Users (name, contact_info, email, location, full_address, abstract_a
 ('Admin User', 'admin@portal.com', 'admin@portal.com', 'Portal HQ', 'Portal HQ', 'HQ', 'admin', '$2a$10$YourHashedPasswordHere', TRUE);
 
 -- Sample Help Requests
-INSERT INTO HelpRequests (resident_id, requester_id, requester_name, title, description, category, status, full_address, abstract_address, is_urgent, complexity, estimated_duration, preferred_time, offers, timeline) VALUES
-(1, 1, 'John Doe', 'Need help with plumbing', 'Kitchen sink is leaking and needs repair', 'Plumbing', 'pending', '123 Main St, Downtown', 'Downtown', FALSE, 'Medium', '2 hours', 'Weekends', '[]', '[{"status":"pending","timestamp":"2024-01-01T00:00:00.000Z","note":"Request Created"}]'),
-(1, 1, 'John Doe', 'Grocery shopping assistance', 'Need someone to help pick up groceries from store', 'Grocery', 'pending', '123 Main St, Downtown', 'Downtown', FALSE, 'Low', '1 hour', 'Mornings', '[]', '[{"status":"pending","timestamp":"2024-01-01T00:00:00.000Z","note":"Request Created"}]');
+INSERT INTO HelpRequests (requester_id, requester_name, title, description, category, status, full_address, abstract_address, is_urgent, complexity, estimated_duration, preferred_time, offers, timeline) VALUES
+(1, 'John Doe', 'Need help with plumbing', 'Kitchen sink is leaking and needs repair', 'Plumbing', 'pending', '123 Main St, Downtown', 'Downtown', FALSE, 'Medium', '2 hours', 'Weekends', '[]', '[{"status":"pending","timestamp":"2024-01-01T00:00:00.000Z","note":"Request Created"}]'),
+(1, 'John Doe', 'Grocery shopping assistance', 'Need someone to help pick up groceries from store', 'Grocery', 'pending', '123 Main St, Downtown', 'Downtown', FALSE, 'Low', '1 hour', 'Mornings', '[]', '[{"status":"pending","timestamp":"2024-01-01T00:00:00.000Z","note":"Request Created"}]');
 
 -- ============================================
 -- Verification Queries
@@ -94,23 +92,9 @@ INSERT INTO HelpRequests (resident_id, requester_id, requester_name, title, desc
 --   r.title,
 --   r.category,
 --   r.status,
---   u1.name as resident_name,
+--   u1.name as requester_name,
 --   u2.name as helper_name,
 --   r.created_at
 -- FROM HelpRequests r
--- INNER JOIN Users u1 ON r.resident_id = u1.id
--- LEFT JOIN Users u2 ON r.helper_id = u2.id;
-
-
--- View all requests with user details
--- SELECT 
---   r.id,
---   r.title,
---   r.category,
---   r.status,
---   u1.name as resident_name,
---   u2.name as helper_name,
---   r.created_at
--- FROM HelpRequests r
--- INNER JOIN Users u1 ON r.resident_id = u1.id
+-- INNER JOIN Users u1 ON r.requester_id = u1.id
 -- LEFT JOIN Users u2 ON r.helper_id = u2.id;

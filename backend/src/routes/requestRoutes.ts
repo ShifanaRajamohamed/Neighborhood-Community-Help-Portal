@@ -17,10 +17,10 @@ const router = express.Router();
 // All routes require authentication
 router.use(authenticate);
 
-// Create request (Residents and Requesters)
+// Create request (Requesters)
 router.post(
   '/',
-  authorize(UserRole.RESIDENT, UserRole.REQUESTER),
+  authorize(UserRole.REQUESTER),
   validateRequestCreation,
   createRequest
 );
@@ -31,10 +31,10 @@ router.get('/', getRequests);
 // Get single request (All authenticated users)
 router.get('/:id', getRequestById);
 
-// Update request status (Residents, Requesters and Helpers)
+// Update request status (Requesters and Helpers)
 router.put(
   '/:id/status',
-  authorize(UserRole.RESIDENT, UserRole.REQUESTER, UserRole.HELPER),
+  authorize(UserRole.REQUESTER, UserRole.HELPER),
   validateStatusUpdate,
   updateRequestStatus
 );

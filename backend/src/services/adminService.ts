@@ -28,7 +28,6 @@ interface AdminRequestFilters {
 
 interface AdminRequest extends RowDataPacket {
   id: number;
-  resident_id: number;
   requester_id: number;
   requester_name: string;
   helper_id: number | null;
@@ -48,9 +47,8 @@ interface AdminRequest extends RowDataPacket {
   timeline: string | null | any[];
   created_at: Date;
   updated_at: Date;
-  resident_name: string;
-  resident_contact: string;
-  resident_location: string;
+  requester_contact: string;
+  requester_location: string;
   helper_contact: string | null;
 }
 
@@ -68,13 +66,13 @@ export async function getAllRequests(filters: AdminRequestFilters): Promise<Admi
   let query = `
       SELECT 
         r.*,
-        u1.name as resident_name,
-        u1.contact_info as resident_contact,
-        u1.location as resident_location,
+        u1.name as requester_name,
+        u1.contact_info as requester_contact,
+        u1.location as requester_location,
         u2.name as helper_name,
         u2.contact_info as helper_contact
       FROM HelpRequests r
-      LEFT JOIN Users u1 ON r.resident_id = u1.id
+      LEFT JOIN Users u1 ON r.requester_id = u1.id
       LEFT JOIN Users u2 ON r.helper_id = u2.id
       WHERE 1=1
     `;
@@ -118,13 +116,13 @@ export async function getRequestById(id: number): Promise<AdminRequest | null> {
   const query = `
       SELECT 
         r.*,
-        u1.name as resident_name,
-        u1.contact_info as resident_contact,
-        u1.location as resident_location,
+        u1.name as requester_name,
+        u1.contact_info as requester_contact,
+        u1.location as requester_location,
         u2.name as helper_name,
         u2.contact_info as helper_contact
       FROM HelpRequests r
-      LEFT JOIN Users u1 ON r.resident_id = u1.id
+      LEFT JOIN Users u1 ON r.requester_id = u1.id
       LEFT JOIN Users u2 ON r.helper_id = u2.id
       WHERE r.id = ?
     `;

@@ -2,7 +2,7 @@ import { Response } from 'express';
 import { RequestService } from '../services/requestService';
 import { AuthRequest } from '../middleware/auth';
 import { asyncHandler } from '../middleware/errorHandler';
-import { ApiResponse, CreateRequestDTO, UpdateRequestStatusDTO } from '../types';
+import { ApiResponse, CreateRequestDTO, UpdateRequestStatusDTO, RequestStatus } from '../types';
 
 const requestService = new RequestService();
 
@@ -14,7 +14,7 @@ export const createRequest = asyncHandler(async (req: AuthRequest, res: Response
 
   const requestData: CreateRequestDTO = {
     ...req.body,
-    resident_id: req.user.id
+    requester_id: req.user.id
   };
 
   const newRequest = await requestService.createRequest(requestData);
@@ -27,11 +27,11 @@ export const createRequest = asyncHandler(async (req: AuthRequest, res: Response
 });
 
 export const getRequests = asyncHandler(async (req: AuthRequest, res: Response<ApiResponse>) => {
-  const { status, resident_id, helper_id, limit, offset } = req.query;
+  const { status, requester_id, helper_id, limit, offset } = req.query;
 
   const filters: any = {};
-  if (status) filters.status = status as string;
-  if (resident_id) filters.resident_id = parseInt(resident_id as string);
+  if (status) filters.status = status as RequestStatus;
+  if (requester_id) filters.requester_id = parseInt(requester_id as string);
   if (helper_id === 'null') filters.helper_id = null;
   else if (helper_id) filters.helper_id = parseInt(helper_id as string);
 

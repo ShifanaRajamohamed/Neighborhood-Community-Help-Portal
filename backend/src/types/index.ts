@@ -1,5 +1,4 @@
 export enum UserRole {
-  RESIDENT = 'resident',
   HELPER = 'helper',
   ADMIN = 'admin',
   REQUESTER = 'requester'
@@ -42,8 +41,7 @@ export interface User {
 
 export interface HelpRequest {
   id: number;
-  resident_id: number;
-  requester_id?: number;
+  requester_id: number;
   requester_name?: string;
   requesterId?: number;
   requesterName?: string;
@@ -85,8 +83,7 @@ export interface CreateUserDTO {
 }
 
 export interface CreateRequestDTO {
-  resident_id: number;
-  requester_id?: number;
+  requester_id: number;
   requester_name?: string;
   title: string;
   description: string;
