@@ -4,7 +4,7 @@ import { DataService } from '../services/data.service';
 import { RequestCardComponent } from './request-card.component';
 import { CommonModule } from '@angular/common';
 import Chart from 'chart.js/auto';
-import { User } from '../../shared/types';
+import { User } from '../../../../shared/types';
 
 @Component({
   selector: 'app-dashboard',
@@ -161,7 +161,7 @@ import { User } from '../../shared/types';
 export class DashboardComponent implements OnDestroy {
   dataService = inject(DataService);
   private router: Router = inject(Router);
-  
+
   user = this.dataService.currentUser;
   helpers = computed(() => this.dataService.users().filter(u => u.role === 'helper'));
 
@@ -170,22 +170,22 @@ export class DashboardComponent implements OnDestroy {
 
   constructor() {
     if (!this.dataService.currentUser()) {
-        this.router.navigate(['/login']);
+      this.router.navigate(['/login']);
     }
 
     effect(() => {
-       const canvas = this.canvasRef()?.nativeElement;
-       const stats = this.dataService.stats();
-       if (canvas) {
-           if (this.chart) {
-               this.updateChartData(stats);
-           } else {
-               this.createChart(canvas, stats);
-           }
-       } else if (this.chart) {
-           this.chart.destroy();
-           this.chart = null;
-       }
+      const canvas = this.canvasRef()?.nativeElement;
+      const stats = this.dataService.stats();
+      if (canvas) {
+        if (this.chart) {
+          this.updateChartData(stats);
+        } else {
+          this.createChart(canvas, stats);
+        }
+      } else if (this.chart) {
+        this.chart.destroy();
+        this.chart = null;
+      }
     });
   }
 
@@ -197,7 +197,7 @@ export class DashboardComponent implements OnDestroy {
         datasets: [{
           label: 'Requests',
           data: [stats.pending, stats.active, stats.completed],
-          backgroundColor: [ 'rgba(251, 191, 36, 0.8)', 'rgba(31, 41, 55, 0.8)', 'rgba(202, 138, 4, 0.8)' ],
+          backgroundColor: ['rgba(251, 191, 36, 0.8)', 'rgba(31, 41, 55, 0.8)', 'rgba(202, 138, 4, 0.8)'],
           borderRadius: 8,
           barPercentage: 0.6
         }]

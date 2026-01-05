@@ -2,7 +2,7 @@ import { Component, inject, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { DataService } from '../services/data.service';
-import { UserRole } from '../../shared/types';
+import { UserRole } from '../../../../shared/types';
 
 @Component({
   selector: 'app-register',

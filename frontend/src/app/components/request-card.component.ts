@@ -1,6 +1,6 @@
 import { Component, input, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { HelpRequest, RequestStatus, User } from '../../shared/types';
+import { HelpRequest, RequestStatus, User } from '../../../../shared/types';
 import { DataService } from '../services/data.service';
 
 @Component({
