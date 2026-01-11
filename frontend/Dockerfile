@@ -17,7 +17,7 @@ RUN pnpm install --frozen-lockfile
 COPY . .
 
 # Build Angular app
-RUN pnpm build
+RUN npx ng build --configuration=production
 
 # Production stage with nginx
 FROM nginx:alpine AS production

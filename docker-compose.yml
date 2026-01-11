@@ -1,29 +1,6 @@
 version: '3.8'
 
 services:
-  # MySQL Database 
-  mysql:
-    image: mysql:8-oracle
-    container_name: neighborhood-mysql
-    restart: unless-stopped
-    environment:
-      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
-      MYSQL_DATABASE: ${DB_NAME}
-      MYSQL_USER: ${DB_USER}
-      MYSQL_PASSWORD: ${DB_PASSWORD}
-    ports:
-      - "${DB_PORT:-3306}:3306"
-    volumes:
-      - mysql_data:/var/lib/mysql
-      - ./backend/database/setup.sql:/docker-entrypoint-initdb.d/01-setup.sql
-    networks:
-      - app-network
-    healthcheck:
-      test: ["CMD-SHELL", "mysqladmin ping -h localhost -u root -p$$MYSQL_ROOT_PASSWORD"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
   # Backend API
   backend:
     build:
@@ -31,13 +8,10 @@ services:
       dockerfile: Dockerfile
     container_name: neighborhood-backend
     restart: unless-stopped
-    depends_on:
-      mysql:
-        condition: service_healthy
     environment:
       NODE_ENV: ${NODE_ENV:-production}
       PORT: ${PORT:-3001}
-      DB_HOST: mysql
+      DB_HOST: host.docker.internal
       DB_PORT: 3306
       DB_USER: ${DB_USER}
       DB_PASSWORD: ${DB_PASSWORD}
@@ -75,8 +49,6 @@ services:
       - API_URL=http://backend:3001
 
 volumes:
-  mysql_data:
-    driver: local
   backend_logs:
     driver: local
 

@@ -7,7 +7,10 @@
     "build": "tsc",
     "start": "node dist/index.js",
     "dev": "ts-node src/index.ts",
-    "watch": "nodemon --watch src --exec ts-node src/index.ts"
+    "watch": "nodemon --watch src --exec ts-node src/index.ts",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage"
   },
   "keywords": ["neighborhood", "community", "help", "portal"],
   "author": "",
@@ -22,17 +25,32 @@
     "graphql": "^16.8.1",
     "apollo-server-express": "^3.13.0",
     "zod": "^3.22.4",
-    "better-auth": "^1.4.9",
-    "@types/bcryptjs": "^2.4.6"
+    "better-auth": "^1.4.9"
   },
   "devDependencies": {
-    "@types/express": "^4.17.21",
-    "@types/cors": "^2.8.17",
     "@types/bcryptjs": "^2.4.6",
-    "@types/jsonwebtoken": "^9.0.5",
-    "@types/node": "^20.10.5",
-    "typescript": "^5.3.3",
+    "@types/cors": "^2.8.17",
+    "@types/express": "^4.17.21",
+    "@types/jest": "^29.5.12",
+    "@types/jsonwebtoken": "^9.0.6",
+    "@types/node": "^22.10.2",
+    "@types/supertest": "^6.0.2",
+    "jest": "^29.7.0",
+    "supertest": "^7.0.0",
+    "ts-jest": "^29.1.4",
     "ts-node": "^10.9.2",
-    "nodemon": "^3.0.2"
+    "typescript": "~5.6.3"
+  },
+  "jest": {
+    "preset": "ts-jest",
+    "testEnvironment": "node",
+    "roots": ["<rootDir>/src", "<rootDir>/tests"],
+    "testMatch": ["**/__tests__/**/*.test.ts", "**/?(*.)+(spec|test).ts"],
+    "collectCoverageFrom": [
+      "src/**/*.ts",
+      "!src/**/*.d.ts",
+      "!src/index.ts"
+    ],
+    "setupFilesAfterEnv": ["<rootDir>/tests/setup.ts"]
   }
 }
